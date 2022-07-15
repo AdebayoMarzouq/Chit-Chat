@@ -1,6 +1,6 @@
 import { ChevronLeftIcon, LogoutIcon } from '@heroicons/react/outline'
 import { useNavigate, Outlet, useLocation } from 'react-router-dom'
-import { useAppContext } from '../context'
+import { useAppContext } from '../../context'
 
 const Profile = () => {
   const navigate = useNavigate()
@@ -19,6 +19,10 @@ const Profile = () => {
           onClick={() => {
             if (pathname === '/profile') {
               navigate('/')
+              return
+            }
+            if (pathname === '/profile/settings/') {
+              navigate('/profile')
               return
             }
             navigate(-1)

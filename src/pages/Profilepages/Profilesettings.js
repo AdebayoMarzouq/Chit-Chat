@@ -1,7 +1,7 @@
 import React from 'react'
 import { PencilIcon, ChevronRightIcon } from '@heroicons/react/outline'
 import { useNavigate } from 'react-router-dom'
-import { useAppContext } from '../context'
+import { useAppContext } from '../../context'
 
 const Profilesettings = () => {
   const navigate = useNavigate()

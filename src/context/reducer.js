@@ -7,6 +7,7 @@ import {
   SET_ROOM_INFO,
   SET_ROOM_MESSAGES,
   SET_ROOM_USERS,
+  SET_USER_INFO,
 } from './action'
 
 const reducer = (state, { type, payload }) => {
@@ -22,6 +23,9 @@ const reducer = (state, { type, payload }) => {
 
     case USER:
       return { ...state, user: payload }
+
+    case SET_USER_INFO:
+      return { ...state, user: { ...state.user, ...payload } }
 
     case SET_ROOM:
       return { ...state, rooms: payload }

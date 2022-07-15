@@ -6,7 +6,8 @@ module.exports = {
       colors: {
         light: {
           bg: '#ffffff',
-          main: '#3ec1d3',
+          main: '#8b5cf6', //#3ec1d3
+          maintint: '#c4b5fd',
           text: '#676767',
           chat: '#777777',
           title: '#2d3f65',

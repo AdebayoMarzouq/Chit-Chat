@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Outlet, useOutletContext, useParams } from 'react-router-dom'
-import { useAppContext } from '../context'
+import { useAppContext } from '../../context'
 
 const Chatgroup = () => {
   const { roomID } = useParams()

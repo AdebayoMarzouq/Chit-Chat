@@ -42,13 +42,13 @@ const Modal = ({ type, setModal }) => {
         >
           <XIcon className='h-6 w-6' />
         </button>
-        <p className='absolute text-xs text-light-text top-2 left-5'>
+        <p className='absolute text-xs text-light-chat top-2 left-5'>
           {type === 'create'
             ? '40 characters max'
             : 'Paste room link here to join'}
         </p>
         <form className='space-y-2 flex-col mt-4'>
-          <div className='h-14 border-b'>
+          <div className='h-14 border-b border-light-main'>
             <input
               className='placeholder:select-none'
               type='text'
@@ -71,7 +71,7 @@ const Modal = ({ type, setModal }) => {
                 className={`border select-none py-1 px-2 rounded-xl text-sm ml-auto ${
                   !roomName
                     ? 'pointer-events-none text-gray-400'
-                    : 'hover:text-white hover:bg-[#3ed7ee] border-[#3ed7ee] text-[#3ed7ee]'
+                    : 'hover:text-white hover:bg-light-main border-light-main text-light-main'
                 }`}
                 onClick={handleCreate}
                 disabled={!roomName}
@@ -83,7 +83,7 @@ const Modal = ({ type, setModal }) => {
                 className={`border select-none py-1 px-2 rounded-xl text-sm ml-auto ${
                   !roomLink
                     ? 'pointer-events-none text-gray-400'
-                    : 'hover:text-white hover:bg-[#3ed7ee] border-[#3ed7ee] text-[#3ed7ee]'
+                    : 'hover:text-white hover:bg-light-main border-light-main text-light-main'
                 }`}
                 onClick={handleJoin}
                 disabled={!roomLink}

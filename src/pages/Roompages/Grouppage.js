@@ -1,6 +1,6 @@
 import React from 'react'
 import { useEffect, useState, useRef } from 'react'
-import { Groupheader, Chatbubble, Chatinput } from '../components'
+import { Groupheader, Chatbubble, Chatinput } from '../../components'
 import { useOutletContext } from 'react-router-dom'
 import uuid from 'react-uuid'
 

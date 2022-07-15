@@ -5,6 +5,7 @@ import {
   ChatIcon,
   PlusSmIcon,
   UserIcon,
+  UsersIcon,
   UserGroupIcon,
 } from '@heroicons/react/outline'
 import { useAppContext } from '../context/context'
@@ -26,7 +27,7 @@ const Home = () => {
     <main className='min-h-screen grid grid-cols-1'>
       <section className='space-y-2 px-4'>
         <div className='flex items-end space-x-2 py-2'>
-          <Homeheader className='flex-grow' />
+          <Homeheader name='Home' className='flex-grow' />
         </div>
         <div className='grid grid-cols-2 pt-2 pb-4'>
           <div
@@ -40,7 +41,7 @@ const Home = () => {
             <div className='font-semibold text-xl select-none cursor-pointer flex items-center space-x-2 mb-2'>
               <ChatIcon
                 className={`w-6 h-6 ${
-                  tab === 'chats' ? 'stroke-[#3ed7ee]' : 'stroke-gray-400'
+                  tab === 'chats' ? 'stroke-light-main' : 'stroke-gray-400'
                 }`}
               />
             </div>
@@ -56,7 +57,7 @@ const Home = () => {
             <div className='font-semibold text-xl select-none cursor-pointer mb-2'>
               <UserGroupIcon
                 className={`w-6 h-6 ${
-                  tab === 'rooms' ? 'stroke-[#3ed7ee]' : 'stroke-gray-400'
+                  tab === 'rooms' ? 'stroke-light-main' : 'stroke-gray-400'
                 }`}
               />
             </div>
@@ -71,7 +72,7 @@ const Home = () => {
                   className='flex items-center'
                   onClick={() => setModal({ show: true, type: 'join' })}
                 >
-                  Join Room <PlusSmIcon className='h-4 w-4' />
+                  Join room <PlusSmIcon className='h-4 w-4' />
                 </button>
                 <button
                   className='flex items-center'
@@ -79,6 +80,13 @@ const Home = () => {
                 >
                   New room <PlusSmIcon className='h-4 w-4' />
                 </button>
+              </>
+            )}
+            {tab === 'chats' && (
+              <>
+                <Link to='/users' className='flex items-center'>
+                  All users <UsersIcon className='h-4 w-4 ml-1' />
+                </Link>
               </>
             )}
           </div>

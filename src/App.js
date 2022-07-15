@@ -8,12 +8,16 @@ import {
   Profile,
   Profilepage,
   Profilesettings,
+  Editprofile,
+  Alertstyle,
   Chatsettings,
   Chatpage,
   Groupsettings,
   Grouppage,
+  Usercontainer,
+  Users,
+  Userdetail,
 } from './pages'
-import { Editprofile, Alertstyle } from './pages/Profilepages'
 import { ProtectedRoute } from './Protected'
 import { useAppContext } from './context'
 
@@ -31,10 +35,20 @@ const App = () => {
   // Add all error notifcation and action alerts
   // Add online or offline status colors and logic ** search how to track user in focus events for away status
   // Optimize app by watching renders and also cache chat data and limit re-renders
+  // Hide group link from non-creator according to user settings
+  // Separate out commot components between rooms and chats
+  // Handle profile views by user and other viewers **
+  // Assign user avatar during signup and allow users change avatar in settings
 
   return (
     <Routes>
+      {/* login */}
+      <Route path='/login' element={<Login />} />
+      {/* sign up */}
+      <Route path='/signup' element={<Signup />} />
+      {/* home */}
       <Route
+        index
         path='/'
         element={
           <ProtectedRoute user={user}>
@@ -42,10 +56,9 @@ const App = () => {
           </ProtectedRoute>
         }
       />
-      <Route path='/login' element={<Login />} />
-      <Route path='/signup' element={<Signup />} />
+      {/* chat */}
       <Route
-        path='/chat/:roomID'
+        path='/chat/:chatID'
         element={
           <ProtectedRoute user={user}>
             <Chatroom />
@@ -53,7 +66,7 @@ const App = () => {
         }
       >
         <Route
-          path='/chat/:roomID/'
+          path='/chat/:chatID/'
           element={
             <ProtectedRoute user={user}>
               <Chatpage />
@@ -61,7 +74,7 @@ const App = () => {
           }
         />
         <Route
-          path='/chat/:roomID/settings'
+          path='/chat/:chatID/settings'
           element={
             <ProtectedRoute user={user}>
               <Chatsettings />
@@ -69,6 +82,7 @@ const App = () => {
           }
         />
       </Route>
+      {/* room */}
       <Route
         path='/room/:roomID'
         element={
@@ -94,6 +108,33 @@ const App = () => {
           }
         />
       </Route>
+      {/* users */}
+      <Route
+        path='/users'
+        element={
+          <ProtectedRoute user={user}>
+            <Usercontainer />
+          </ProtectedRoute>
+        }
+      >
+        <Route
+          path='/users'
+          element={
+            <ProtectedRoute user={user}>
+              <Users />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/users/:userID/'
+          element={
+            <ProtectedRoute user={user}>
+              <Userdetail />
+            </ProtectedRoute>
+          }
+        />
+      </Route>
+      {/* logged in user profile */}
       <Route
         path='/profile'
         element={

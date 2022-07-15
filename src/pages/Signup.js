@@ -31,8 +31,8 @@ const Signup = () => {
   return (
     <main className='flex flex-col items-center px-4 py-8'>
       <div className='space-y-8 flex flex-col items-center mb-4'>
-        <ReactComponent className='fill-[#3ed7ee] h-32 w-32 drop-shadow-md' />
-        <h2 className='text-[#3ed7ee] text-4xl font-bold'>ChitChat</h2>
+        <ReactComponent className='fill-light-main h-32 w-32 drop-shadow-md' />
+        <h2 className='text-light-main text-4xl font-bold'>ChitChat</h2>
       </div>
       <form
         className='flex flex-col px-4 pt-4 pb-2 space-y-8 w-full'
@@ -55,7 +55,7 @@ const Signup = () => {
           />
         </div>
         <button
-          className={`bg-[#3ed7ee] rounded-full py-2 px-4 text-white w-1/2 self-center ${
+          className={`bg-light-main rounded-full py-2 px-4 text-white w-1/2 self-center ${
             loading && 'cursor-wait'
           }`}
           onClick={handleSubmit}

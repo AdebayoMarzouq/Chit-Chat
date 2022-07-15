@@ -25,6 +25,8 @@ import {
   where,
 } from 'firebase/firestore'
 
+import { uniqueNamesGenerator, adjectives, names } from 'unique-names-generator'
+
 import { useNavigate } from 'react-router-dom'
 
 import { auth, firestoreDB } from './firebase/firebaseutil'
@@ -38,6 +40,7 @@ import {
   SET_ROOM_INFO,
   SET_ROOM_MESSAGES,
   SET_ROOM_USERS,
+  SET_USER_INFO,
 } from './action'
 
 const AppContext = React.createContext()
@@ -71,38 +74,45 @@ const AppProvider = ({ children }) => {
         errorNotify(toast.success, 'Sign in successful')
       } else if (type === 'signup') {
         const res = await createUserWithEmailAndPassword(auth, _email, password) // Firebase function to trigger user sign up with email and passowrd
-        const { uid, email, photoURL } = res.user
-        const userRef = doc(firestoreDB, `users/${uid}`) // creates reference to user document in firestore db
+        const { uid, photoURL } = res.user
+        const userRef = doc(firestoreDB, `users/${uid}`) // creates reference to user document in firestore
+        const shortName = uniqueNamesGenerator({
+          dictionaries: [adjectives, names], // colors can be omitted here as not used
+          length: 2,
+          separator: '-',
+        })
+        // db
         const promises = [
           // sets destructured user info into firestore db
           setDoc(userRef, {
-            username: '',
-            userID: uid,
-            userRef: userRef,
-            email: email,
+            username: shortName,
+            firstname: 'Human',
+            lastname: 'Doe',
             about: '',
-            profileUrl: photoURL ? photoURL : '',
+            preferences: {},
+            profileUrl: photoURL ? photoURL : `${Math.ceil(Math.random() * 6)}`,
           }),
           // initialized room subcollection in user document
           addDoc(collection(firestoreDB, `users/${uid}/rooms`), {
             roomID: '',
             roomPath: '',
             roomName: 'ChitChat Bot',
+            roomSettings: {},
           }),
           // initialized friends subcollection in user document
           addDoc(collection(firestoreDB, `users/${uid}/friends`), {
-            name: 'ChitChat Bot',
+            name: '',
           }),
         ]
         Promise.all(promises)
           .then((res) => console.log(res))
           .catch((error) => console.log(error))
-        errorNotify(toast.success, 'Login successsful') // Notifies user of successful login or sign up
+        errorNotify(toast.success, 'Sign up successsful') // Notifies user of successful login or sign up
       }
       navigate('/')
     } catch (error) {
-      dispatch({ type: ERROR, payload: { show: true, msg: error.message } })
-      errorNotify(toast.error, error.message) // Error notification
+      dispatch({ type: ERROR, payload: { show: true, msg: error.code } })
+      errorNotify(toast.error, error.code) // Error notification
       console.log(error.code, error.message)
     }
     dispatch({ type: LOADING, payload: false })
@@ -118,14 +128,56 @@ const AppProvider = ({ children }) => {
     }
   }
 
-  function errorNotify(type = toast, msg, time = 5000) {
+  function errorNotify(type = toast, msg, time = 2000) {
     /*function that creates a notification using react-toastify library*/
     type(msg, {
       position: toast.POSITION.TOP_CENTER,
       autoClose: time,
-      className: 'rounded-0 bg-[#3ed7ee] text-white',
+      className: 'rounded-0 bg-light-maintint',
+      bodyClassName: 'text-light-text',
     })
   }
+  // User info
+  const getUserInfo = useCallback(
+    (userID) =>
+      // Gets user info and listens for change in user info
+      onSnapshot(doc(firestoreDB, `users/${userID}`), (userDoc) => {
+        console.log(userID, userDoc.data())
+        const {
+          firstname,
+          lastname,
+          preferences,
+          about,
+          profileUrl,
+          username,
+        } = userDoc.data()
+        dispatch({
+          type: SET_USER_INFO,
+          payload: {
+            firstname,
+            lastname,
+            preferences,
+            about,
+            profileUrl,
+            username,
+          },
+        })
+      }),
+    []
+  )
+
+  const editUserInfo = async (userInfo) => {
+    const userRef = doc(firestoreDB, `users/${state.user.userID}`)
+    try {
+      await updateDoc(userRef, userInfo)
+      errorNotify(toast.success, 'Profile info changed successfully')
+    } catch (error) {
+      console.log(error.code, error.message)
+      errorNotify(toast.error, error.code)
+    }
+  }
+
+  // Everything about room here
 
   const createRoom = async (roomName) => {
     /*This function creates a room document in firebase then extra calls are made to create a messages collection and users collection in the room also the roomID is added to the users list of rooms*/
@@ -142,14 +194,12 @@ const AppProvider = ({ children }) => {
         // creates the first message along with the user info
         addDoc(collection(firestoreDB, `rooms/${docRef.id}/messages`), {
           message: 'Hello Room, I created this room',
-          username: state.user.username || 'no username',
-          email: state.user.email,
+          username: state.user.username,
           userID: state.user.userID,
         }),
         // adds first user or precisely the user that created the room to the room
         addDoc(collection(firestoreDB, `rooms/${docRef.id}/users`), {
-          username: state.user.username || 'no username',
-          email: state.user.email,
+          username: state.user.username,
           userID: state.user.userID,
         }),
         setDoc(
@@ -216,9 +266,9 @@ const AppProvider = ({ children }) => {
     }
   }
 
-  const deleteGroup = () => {}
+  const deleteRoom = () => {}
 
-  const LeaveGroup = () => {}
+  const LeaveRoom = () => {}
 
   const removeUser = () => {}
 
@@ -277,6 +327,8 @@ const AppProvider = ({ children }) => {
     []
   )
 
+  // Everything about chats here
+
   const sendMessage = async (roomID, message) => {
     try {
       await addDoc(collection(firestoreDB, `rooms/${roomID}/messages`), {
@@ -291,6 +343,9 @@ const AppProvider = ({ children }) => {
     }
   }
 
+  // Freind and unFriend
+  const addFriend = () => {}
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -298,15 +353,25 @@ const AppProvider = ({ children }) => {
           type: USER,
           payload: { email: user.email, userID: user.uid },
         })
-        console.log('user signed in', user.email)
+        console.log('user signed in', user.username)
       } else {
         dispatch({ type: USER, payload: {} })
         console.log('user is signed out')
       }
       dispatch({ type: PAGE_LOADING, payload: false })
     })
-    return unsubscribe
-  }, [])
+    return () => {
+      unsubscribe()
+    }
+  }, [getUserInfo])
+
+  useEffect(() => {
+    if (!state.user.userID) return
+    const unsubscribe = getUserInfo(state.user.userID)
+    return () => {
+      unsubscribe()
+    }
+  }, [getUserInfo, state.user.userID])
 
   return (
     <AppContext.Provider
@@ -317,6 +382,8 @@ const AppProvider = ({ children }) => {
         auth,
         authenticateUser,
         signout,
+        getUserInfo,
+        editUserInfo,
         createRoom,
         joinRoom,
         getRooms,
@@ -333,9 +400,9 @@ const AppProvider = ({ children }) => {
           {children}
           <ToastContainer
             className='bg-transparent'
-            autoClose={5000}
+            autoClose={2000}
             hideProgressBar
-            limit={3}
+            limit={1}
             transition={Zoom}
             draggablePercent={60}
           />

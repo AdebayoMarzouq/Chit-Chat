@@ -7,14 +7,15 @@ import {
   PaperAirplaneIcon,
 } from '@heroicons/react/outline'
 import { toast } from 'react-toastify'
-import { useAppContext } from '../context/context'
+import { useAppContext } from '../../context'
 import { useNavigate, useOutletContext } from 'react-router-dom'
+import uuid from 'react-uuid'
 
 const Groupsettings = () => {
   const navigate = useNavigate()
   const { errorNotify } = useAppContext()
   const { roomID, currentRoom } = useOutletContext()
-  const { name } = currentRoom
+  const { name, creator, users: roomUsers } = currentRoom
   const [input, setInput] = React.useState('')
 
   const handleChange = (e) => {
@@ -32,7 +33,7 @@ const Groupsettings = () => {
       </div>
       <div className='flex place-content-center'>
         <img
-          src={require('../images/3.png')}
+          src={require('../../images/3.png')}
           alt='profile'
           className='h-32 w-32'
         />
@@ -86,25 +87,29 @@ const Groupsettings = () => {
             </button>
           </div>
           <ul className='ml-2 my-2 divide-y'>
-            <li className='py-2 flex items-center justify-between'>
-              <div className='space-x-2 flex items-center'>
-                <img
-                  src={require('../images/3.png')}
-                  alt='profile'
-                  className='flex-shrink-0 h-8 w-8'
-                />
-                <p className='truncate'>usersomething@gmail.com</p>
-              </div>
-              <div className='h-4 w-4 rounded-full bg-emerald-400'></div>
-            </li>
-            <li className='py-2 flex items-center space-x-2'>
-              <img
-                src={require('../images/6.png')}
-                alt='profile'
-                className='flex-shrink-0 h-8 w-8'
-              />
-              <p className='truncate'>usersomething@gmail.com</p>
-            </li>
+            {roomUsers &&
+              roomUsers.map((roomUser) => {
+                return (
+                  <li
+                    key={uuid()}
+                    className='py-2 flex items-center justify-between'
+                  >
+                    <div className='space-x-2 flex items-center'>
+                      <img
+                        src={require(`../../images/${Math.ceil(
+                          Math.random() * 6
+                        )}.png`)}
+                        alt='profile'
+                        className='flex-shrink-0 h-8 w-8'
+                      />
+                      <p className='truncate'>{roomUser.username}</p>
+                    </div>
+                    {creator === roomUser.userID && (
+                      <div className='h-4 w-4 rounded-full bg-emerald-400'></div>
+                    )}
+                  </li>
+                )
+              })}
           </ul>
         </li>
       </ul>

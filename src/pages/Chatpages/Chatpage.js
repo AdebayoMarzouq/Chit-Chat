@@ -1,5 +1,5 @@
 import React from 'react'
-import { Chatheader, Chatbubble, Chatinput } from '../components'
+import { Chatheader, Chatbubble, Chatinput } from '../../components'
 
 const Chatpage = () => {
   const text1 = 'Just reached my new location mate'
