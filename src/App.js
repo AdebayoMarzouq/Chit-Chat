@@ -22,6 +22,7 @@ import { ProtectedRoute } from './Protected'
 import { useAppContext } from './context'
 
 import 'react-toastify/dist/ReactToastify.min.css'
+import { Suspense } from 'react'
 
 const App = () => {
   const { user } = useAppContext()
@@ -39,6 +40,8 @@ const App = () => {
   // Separate out commot components between rooms and chats
   // Handle profile views by user and other viewers **
   // Assign user avatar during signup and allow users change avatar in settings
+  // Make friend check for appropriate icon in users and user detail
+  // Add Error handling in all profile related pages
 
   return (
     <Routes>

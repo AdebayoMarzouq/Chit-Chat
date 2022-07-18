@@ -1,5 +1,6 @@
 import React, { useContext, useReducer, useEffect, useCallback } from 'react'
 
+import { suspend } from 'suspend-react'
 import { ToastContainer, toast, Zoom } from 'react-toastify'
 import {
   onAuthStateChanged,
@@ -32,14 +33,15 @@ import { useNavigate } from 'react-router-dom'
 import { auth, firestoreDB } from './firebase/firebaseutil'
 import reducer from './reducer'
 import {
-  LOADING,
-  PAGE_LOADING,
   ERROR,
   USER,
-  SET_ROOM,
-  SET_ROOM_INFO,
-  SET_ROOM_MESSAGES,
-  SET_ROOM_USERS,
+  LOADING,
+  PAGE_LOADING,
+  SET_USER_ROOMS,
+  SET_USER_FRIENDS,
+  SET_CURRENT_ROOM,
+  SET_CURRENT_ROOM_MESSAGES,
+  SET_CURRENT_ROOM_USERS,
   SET_USER_INFO,
 } from './action'
 
@@ -47,11 +49,13 @@ const AppContext = React.createContext()
 
 const initialState = {
   error: { show: false, msg: '' },
-  loading: false,
+  auth_loading: false,
   page_loading: true,
   user: {},
-  rooms: [],
-  currentRoom: {},
+  user_info: {},
+  user_rooms: [],
+  user_friends: [],
+  user_currentRoom: {},
 }
 
 const AppProvider = ({ children }) => {
@@ -74,7 +78,7 @@ const AppProvider = ({ children }) => {
         errorNotify(toast.success, 'Sign in successful')
       } else if (type === 'signup') {
         const res = await createUserWithEmailAndPassword(auth, _email, password) // Firebase function to trigger user sign up with email and passowrd
-        const { uid, photoURL } = res.user
+        const { uid, email, photoURL } = res.user
         const userRef = doc(firestoreDB, `users/${uid}`) // creates reference to user document in firestore
         const shortName = uniqueNamesGenerator({
           dictionaries: [adjectives, names], // colors can be omitted here as not used
@@ -85,6 +89,8 @@ const AppProvider = ({ children }) => {
         const promises = [
           // sets destructured user info into firestore db
           setDoc(userRef, {
+            userID: uid,
+            email: email,
             username: shortName,
             firstname: 'Human',
             lastname: 'Doe',
@@ -94,14 +100,14 @@ const AppProvider = ({ children }) => {
           }),
           // initialized room subcollection in user document
           addDoc(collection(firestoreDB, `users/${uid}/rooms`), {
-            roomID: '',
-            roomPath: '',
-            roomName: 'ChitChat Bot',
-            roomSettings: {},
+            // roomID: '',
+            // roomPath: '',
+            // roomName: 'ChitChat Bot',
+            // roomSettings: {},
           }),
           // initialized friends subcollection in user document
           addDoc(collection(firestoreDB, `users/${uid}/friends`), {
-            name: '',
+            // name: '',
           }),
         ]
         Promise.all(promises)
@@ -141,28 +147,38 @@ const AppProvider = ({ children }) => {
   const getUserInfo = useCallback(
     (userID) =>
       // Gets user info and listens for change in user info
-      onSnapshot(doc(firestoreDB, `users/${userID}`), (userDoc) => {
-        console.log(userID, userDoc.data())
-        const {
-          firstname,
-          lastname,
-          preferences,
-          about,
-          profileUrl,
-          username,
-        } = userDoc.data()
-        dispatch({
-          type: SET_USER_INFO,
-          payload: {
-            firstname,
-            lastname,
-            preferences,
-            about,
-            profileUrl,
-            username,
-          },
-        })
-      }),
+      onSnapshot(
+        doc(firestoreDB, `users/${userID}`),
+        (userDoc) => {
+          if (userDoc.exists()) {
+            const {
+              firstname,
+              lastname,
+              preferences,
+              about,
+              profileUrl,
+              username,
+            } = userDoc.data()
+            dispatch({
+              type: SET_USER_INFO,
+              payload: {
+                firstname,
+                lastname,
+                preferences,
+                about,
+                profileUrl,
+                username,
+              },
+            })
+          } else {
+            throw new Error('Could not fetch your info')
+          }
+        },
+        (error) => {
+          console.log('triggered', error)
+          errorNotify(toast.error, error.code)
+        }
+      ),
     []
   )
 
@@ -194,13 +210,14 @@ const AppProvider = ({ children }) => {
         // creates the first message along with the user info
         addDoc(collection(firestoreDB, `rooms/${docRef.id}/messages`), {
           message: 'Hello Room, I created this room',
-          username: state.user.username,
+          username: state.user_info.username,
           userID: state.user.userID,
         }),
         // adds first user or precisely the user that created the room to the room
         addDoc(collection(firestoreDB, `rooms/${docRef.id}/users`), {
-          username: state.user.username,
+          username: state.user_info.username,
           userID: state.user.userID,
+          role: 'Admin',
         }),
         setDoc(
           // add the room info to the list of rooms the user is in
@@ -226,20 +243,34 @@ const AppProvider = ({ children }) => {
     }
   }
 
-  const getRooms = useCallback(() => {
-    return onSnapshot(
-      collection(firestoreDB, `users/${state.user.userID}/rooms`),
-      (roomSnapshot) => {
-        const rooms = []
-        console.log(rooms)
-        roomSnapshot.forEach((doc) => {
-          const { roomName, roomPath, roomID } = doc.data()
-          rooms.push({ roomName, roomPath, roomID })
-        })
-        dispatch({ type: SET_ROOM, payload: rooms })
-      }
-    )
-  }, [state.user.userID])
+  const getRooms = useCallback(
+    (setRoomStatus) => {
+      return onSnapshot(
+        collection(firestoreDB, `users/${state.user.userID}/rooms`),
+        (roomSnapshot) => {
+          console.log(roomSnapshot)
+          if (!roomSnapshot.empty) {
+            console.log(roomSnapshot.size)
+            const rooms = []
+            roomSnapshot.forEach((doc) => {
+              console.log(doc.data())
+              const { roomName, roomPath, roomID } = doc.data()
+              rooms.push({ roomName, roomPath, roomID })
+            })
+
+            setRoomStatus({ loading: false, error: false })
+            dispatch({ type: SET_USER_ROOMS, payload: rooms })
+          } else {
+            setRoomStatus({ loading: false, error: true })
+          }
+        },
+        (err) => {
+          setRoomStatus({ loading: false, error: true })
+        }
+      )
+    },
+    [state.user.userID]
+  )
 
   const joinRoom = async (roomPath) => {
     const [, roomID, name] = roomPath.split('/')
@@ -247,8 +278,9 @@ const AppProvider = ({ children }) => {
     try {
       // adds first user or precisely the user that created the room to the room
       await addDoc(collection(firestoreDB, `rooms/${roomID}/users`), {
-        username: state.user.username || state.user.email,
+        username: state.user_info.username,
         userID: state.user.userID,
+        role: 'Member',
       })
       await setDoc(
         // add the room info to the list of rooms the user is in
@@ -274,9 +306,9 @@ const AppProvider = ({ children }) => {
 
   const getRoomInfo = useCallback(
     (roomID) =>
-      // Get all users in a room and listens for change in room info
+      // Get room info
       onSnapshot(doc(firestoreDB, `rooms/${roomID}`), (roomDoc) => {
-        dispatch({ type: SET_ROOM_INFO, payload: roomDoc.data() })
+        dispatch({ type: SET_CURRENT_ROOM, payload: roomDoc.data() })
       }),
     []
   )
@@ -292,7 +324,7 @@ const AppProvider = ({ children }) => {
             const { userID, username } = doc.data()
             users.push({ userID, username })
           })
-          dispatch({ type: SET_ROOM_USERS, payload: users })
+          dispatch({ type: SET_CURRENT_ROOM_USERS, payload: users })
         }
       ),
     []
@@ -313,7 +345,10 @@ const AppProvider = ({ children }) => {
             const { message, userID, username, time } = doc.data()
             messages.push({ userID, message, username, time })
           })
-          dispatch({ type: SET_ROOM_MESSAGES, payload: messages.reverse() })
+          dispatch({
+            type: SET_CURRENT_ROOM_MESSAGES,
+            payload: messages.reverse(),
+          })
           // const { userID, username } = messages[messages.length - 1]
           // if (userID !== state.user.userID) {
           //   errorNotify(
@@ -343,8 +378,80 @@ const AppProvider = ({ children }) => {
     }
   }
 
-  // Freind and unFriend
-  const addFriend = () => {}
+  // Friend and unFriend
+  const getAllUsers = useCallback(async (userID) => {
+    let loading
+    let error = false
+    let users = []
+    const userSnapshot = await getDocs(collection(firestoreDB, 'users'))
+    if (userSnapshot.empty) {
+      error = true
+    } else {
+      userSnapshot.forEach((user) => {
+        const userData = user.data()
+        if (userData.userID !== userID) {
+          users.push(user.data())
+        }
+      })
+    }
+    if (!users.length) {
+      error = true
+    }
+    loading = false
+    return { loading, error, users }
+    // eslint-disable-next-line
+  }, [])
+
+  const getUserFriends = useCallback(
+    (setChatStatus) => {
+      return onSnapshot(
+        collection(firestoreDB, `users/${state.user.userID}/friends`),
+        (friendSnapshot) => {
+          if (!friendSnapshot.empty) {
+            const friends = []
+            friendSnapshot.forEach((doc) => {
+              console.log(doc.data())
+              friends.push(doc.data())
+            })
+            setChatStatus({ loading: false, error: false })
+            dispatch({ type: SET_USER_FRIENDS, payload: friends })
+          } else {
+            setChatStatus({ loading: false, error: true })
+          }
+        },
+        (err) => {
+          setChatStatus({ loading: false, error: true })
+        }
+      )
+    },
+    [state.user.userID]
+  )
+
+  // // Promise to fetch all users
+  // const getAppUsers = async () => {
+  //   // return new Promise((resolve) => {
+  //   //   const userSnapshot = getDocs(collection(firestoreDB, 'user'))
+  //   //   resolve(userSnapshot)
+  //   // })
+  //   return getDocs(collection(firestoreDB, 'users'))
+  // }
+
+  const addFriend = async (data) => {
+    let loading, error, success
+    try {
+      await setDoc(
+        doc(firestoreDB, `users/${state.user.userID}/friends/${data.friendID}`),
+        data
+      )
+      success = true
+      errorNotify(toast.success, `You and ${data.username} are now friends`)
+    } catch (err) {
+      error = true
+      errorNotify(toast.error, `Unable to friend ${data.username}, try again`)
+    }
+    loading = false
+    return { loading, error, success }
+  }
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -363,7 +470,7 @@ const AppProvider = ({ children }) => {
     return () => {
       unsubscribe()
     }
-  }, [getUserInfo])
+  }, [])
 
   useEffect(() => {
     if (!state.user.userID) return
@@ -372,6 +479,18 @@ const AppProvider = ({ children }) => {
       unsubscribe()
     }
   }, [getUserInfo, state.user.userID])
+
+  // let user = suspend(getInitialAuthState, ['initialAuthState'])
+  // if (user) {
+  //   console.log(user)
+  //   dispatch({
+  //     type: USER,
+  //     payload: { email: user.email, userID: user.uid },
+  //   })
+  // } else {
+  //   console.log(user)
+  //   dispatch({ type: USER, payload: null })
+  // }
 
   return (
     <AppContext.Provider
@@ -383,7 +502,10 @@ const AppProvider = ({ children }) => {
         authenticateUser,
         signout,
         getUserInfo,
+        getUserFriends,
         editUserInfo,
+        getAllUsers,
+        addFriend,
         createRoom,
         joinRoom,
         getRooms,

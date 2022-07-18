@@ -4,9 +4,13 @@ import { useNavigate } from 'react-router-dom'
 import { useAppContext } from '../../context'
 
 const Profilepage = () => {
-  const { user } = useAppContext()
+  const { user, user_info } = useAppContext()
   const navigate = useNavigate()
-  const { firstname, lastname, email, username, about, profileUrl } = user
+  let { firstname, lastname, username, about, profileUrl } = user_info
+
+  if (!username) {
+    return <div className='sub-loading'></div>
+  }
 
   return (
     <main className='flex flex-col space-y-4 p-8'>
@@ -42,7 +46,7 @@ const Profilepage = () => {
       </div>
       <div className='space-y-1'>
         <h4 className='text-sm text-light-chat'>Email</h4>
-        <h2 className='text-xl text-light-title'>{email}</h2>
+        <h2 className='text-xl text-light-title'>{user.email}</h2>
       </div>
       <div className='space-y-1'>
         <h4 className='text-sm text-light-chat'>About</h4>

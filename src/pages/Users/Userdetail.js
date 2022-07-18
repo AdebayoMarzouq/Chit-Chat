@@ -1,51 +1,45 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
-import { AtSymbolIcon, UserAddIcon } from '@heroicons/react/solid'
+// import { useNavigate } from 'react-router-dom'
+import { useOutletContext, useParams } from 'react-router-dom'
+import { ErrorBoundary } from 'react-error-boundary'
+import { useAppContext } from '../../context/context'
+import { ErrorFallback, Errordisplay } from '../../components'
+import { User } from './User'
 
 const Userdetail = () => {
-  const navigate = useNavigate()
+  const { userID } = useParams()
+  // const navigate = useNavigate()
+  const { loading, error, users, handleError } = useOutletContext()
+  const { addFriend } = useAppContext()
+
+  if (loading) {
+    return <div className='sub-loading'></div>
+  }
+
+  console.log('usersfsjslg', users)
+  const user = users.find((item) => {
+    return userID === item.userID
+  })
+
   return (
     <div className='flex flex-col space-y-4 p-8'>
-      <div className='relative flex items-center space-x-4'>
-        <img
-          className='rounded-full h-24 w-24 ring-4 ring-light-main shrink-0'
-          src={require(`../../images/${Math.ceil(Math.random() * 6)}.png`)}
-          alt='profile_image'
-        />
-        <div className='grid grid-col space-y-[1px]'>
-          <h2 className='text-xl text-light-title'>John Doe</h2>
-          <h3 className='text-light-main flex items-center'>
-            <AtSymbolIcon className='h-4 w-4 text-gray-400' />
-            theJDoe
-          </h3>
-        </div>
-        <button
-          className='absolute flex justify-center items-center h-10 w-10 bottom-1 right-2'
-          onClick={() => {
-            navigate('settings')
-          }}
-        >
-          <UserAddIcon className='icon-list h-10 w-10 drop-shadow text-light-main' />
-        </button>
-      </div>
-      <div className='space-y-1'>
-        <h4 className='text-sm text-light-chat'>Username</h4>
-        <h2 className='text-xl text-light-title'>theJDoe</h2>
-      </div>
-      <div className='space-y-1'>
-        <h4 className='text-sm text-light-chat'>Email</h4>
-        <h2 className='text-xl text-light-title'>testuser@gmail.com</h2>
-      </div>
-      <div className='space-y-1'>
-        <h4 className='text-sm text-light-chat'>About</h4>
-        <h2 className='text-sm text-light-title'>
-          Lorem ipsum dolor sit amet consectetur, adipisicing elit. Optio at
-          ullam voluptatem! Corrupti cum quibusdam doloremque! Aut eos tempora
-          cumque ab? Earum deserunt quisquam quibusdam distinctio assumenda,
-          soluta sint nihil, odio, suscipit iure ipsam odit consequatur at qui.
-          Dolores, animi.
-        </h2>
-      </div>
+      <ErrorBoundary
+        FallbackComponent={ErrorFallback}
+        onReset={handleError}
+        resetKeys={[error]}
+      >
+        {!error ? (
+          <User addFriend={addFriend} {...user} />
+        ) : (
+          <Errordisplay
+            error={{
+              message:
+                'An error occured while fetching users, E fit be your internet',
+            }}
+            resetErrorBoundary={handleError}
+          />
+        )}
+      </ErrorBoundary>
     </div>
   )
 }

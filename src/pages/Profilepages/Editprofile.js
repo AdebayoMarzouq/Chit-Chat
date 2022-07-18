@@ -5,7 +5,7 @@ import { useAppContext } from '../../context'
 
 const Editprofile = () => {
   const navigate = useNavigate()
-  const { user, editUserInfo } = useAppContext()
+  const { user_info, editUserInfo } = useAppContext()
   const [info, setInfo] = React.useState({
     username: '',
     firstname: '',
@@ -14,19 +14,23 @@ const Editprofile = () => {
   })
 
   React.useEffect(() => {
-    if (!user.username) return
+    if (!user_info.username) return
     setInfo({
-      username: user.username,
-      firstname: user.firstname,
-      lastname: user.lastname,
-      about: user.about,
+      username: user_info.username,
+      firstname: user_info.firstname,
+      lastname: user_info.lastname,
+      about: user_info.about,
     })
-  }, [user])
+  }, [user_info])
+
+  if (!user_info.username) {
+    return <div className='sub-loading'></div>
+  }
 
   return (
     <main className='flex flex-col py-4 px-4'>
-      {!user.username ? (
-        <div className='page-loading'></div>
+      {!user_info.username ? (
+        <div>Could not fetch your info</div>
       ) : (
         <>
           <form
