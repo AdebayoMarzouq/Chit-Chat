@@ -8,6 +8,9 @@ import {
   SET_CURRENT_ROOM,
   SET_CURRENT_ROOM_MESSAGES,
   SET_CURRENT_ROOM_USERS,
+  SET_CURRENT_CHAT,
+  SET_CURRENT_CHAT_MESSAGES,
+  SET_CURRENT_CHAT_FRIEND,
   SET_USER_INFO,
 } from './action'
 
@@ -35,18 +38,33 @@ const reducer = (state, { type, payload }) => {
       return { ...state, user_friends: payload }
 
     case SET_CURRENT_ROOM:
-      return { ...state, currentRoom: { ...payload } }
+      return { ...state, user_currentRoom: { ...payload } }
 
     case SET_CURRENT_ROOM_MESSAGES:
       return {
         ...state,
-        currentRoom: { ...state.currentRoom, messages: payload },
+        user_currentRoom: { ...state.user_currentRoom, messages: payload },
       }
 
     case SET_CURRENT_ROOM_USERS:
       return {
         ...state,
-        currentRoom: { ...state.currentRoom, users: payload },
+        user_currentRoom: { ...state.user_currentRoom, users: payload },
+      }
+
+    case SET_CURRENT_CHAT:
+      return { ...state, user_currentChat: { ...payload } }
+
+    case SET_CURRENT_CHAT_MESSAGES:
+      return {
+        ...state,
+        user_currentChat: { ...state.user_currentChat, messages: payload },
+      }
+
+    case SET_CURRENT_CHAT_FRIEND:
+      return {
+        ...state,
+        user_currentChat: { ...state.user_currentChat, friend: payload },
       }
 
     default:

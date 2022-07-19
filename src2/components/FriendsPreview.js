@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 
 const FriendsPreview = ({ friendID, username, about, photoUrl }) => {
   return (
-    <Link to={`/room/${friendID}`} className='flex justify-start'>
+    <Link to={`/chat/${friendID}`} className='flex justify-start'>
       <div className='relative rounded-full w-12 h-12 flex-shrink-0'>
         <img
           src={

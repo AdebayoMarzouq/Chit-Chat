@@ -14,8 +14,8 @@ import uuid from 'react-uuid'
 const Groupsettings = () => {
   const navigate = useNavigate()
   const { errorNotify } = useAppContext()
-  const { roomID, currentRoom } = useOutletContext()
-  const { name, creator, users: roomUsers } = currentRoom
+  const { roomID, user_currentRoom } = useOutletContext()
+  const { name, creator, users: roomUsers } = user_currentRoom
   const [input, setInput] = React.useState('')
 
   const handleChange = (e) => {

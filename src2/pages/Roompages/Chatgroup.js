@@ -1,15 +1,17 @@
 import { useState, useEffect } from 'react'
-import { Outlet, useOutletContext, useParams } from 'react-router-dom'
+import { Outlet, useParams } from 'react-router-dom'
 import { useAppContext } from '../../context'
+import { SET_CURRENT_ROOM } from '../../context/action'
 
 const Chatgroup = () => {
   const { roomID } = useParams()
   const {
+    dispatch,
     getRoomInfo,
     getRoomUsers,
     getRoomMessages,
     user,
-    currentRoom,
+    user_currentRoom,
     sendMessage,
   } = useAppContext()
   const [loading, setLoading] = useState(true)
@@ -23,13 +25,18 @@ const Chatgroup = () => {
     setLoading(false)
 
     return () => {
+      dispatch({ type: SET_CURRENT_ROOM, payload: {} })
       unsubscribe1()
       unsubscribe2()
       unsubscribe3()
     }
+    // eslint-disable-next-line
   }, [getRoomInfo, getRoomMessages, getRoomUsers, roomID])
+
   return (
-    <Outlet context={{ roomID, user, currentRoom, sendMessage, loading }} />
+    <Outlet
+      context={{ roomID, user, user_currentRoom, sendMessage, loading }}
+    />
   )
 }
 

@@ -1,49 +1,47 @@
-import React, { useContext, useReducer, useEffect, useCallback } from 'react'
+import React, { useCallback, useContext, useEffect, useReducer } from 'react'
 
-import { suspend } from 'suspend-react'
-import { ToastContainer, toast, Zoom } from 'react-toastify'
 import {
-  onAuthStateChanged,
   createUserWithEmailAndPassword,
+  onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut,
 } from 'firebase/auth'
 import {
-  collection,
   addDoc,
+  collection,
   doc,
-  setDoc,
   getDocs,
-  updateDoc,
-  arrayUnion,
-  arrayRemove,
-  serverTimestamp,
-  onSnapshot,
-  query,
-  orderBy,
   limit,
-  collectionGroup,
-  where,
+  onSnapshot,
+  orderBy,
+  query,
+  serverTimestamp,
+  setDoc,
+  updateDoc,
 } from 'firebase/firestore'
+import { toast, ToastContainer, Zoom } from 'react-toastify'
 
-import { uniqueNamesGenerator, adjectives, names } from 'unique-names-generator'
+import { adjectives, names, uniqueNamesGenerator } from 'unique-names-generator'
 
 import { useNavigate } from 'react-router-dom'
 
-import { auth, firestoreDB } from './firebase/firebaseutil'
-import reducer from './reducer'
 import {
   ERROR,
-  USER,
   LOADING,
   PAGE_LOADING,
-  SET_USER_ROOMS,
-  SET_USER_FRIENDS,
+  SET_CURRENT_CHAT,
+  SET_CURRENT_CHAT_FRIEND,
+  SET_CURRENT_CHAT_MESSAGES,
   SET_CURRENT_ROOM,
   SET_CURRENT_ROOM_MESSAGES,
   SET_CURRENT_ROOM_USERS,
+  SET_USER_FRIENDS,
   SET_USER_INFO,
+  SET_USER_ROOMS,
+  USER,
 } from './action'
+import { auth, firestoreDB } from './firebase/firebaseutil'
+import reducer from './reducer'
 
 const AppContext = React.createContext()
 
@@ -56,6 +54,7 @@ const initialState = {
   user_rooms: [],
   user_friends: [],
   user_currentRoom: {},
+  user_currentChat: {},
 }
 
 const AppProvider = ({ children }) => {
@@ -194,7 +193,6 @@ const AppProvider = ({ children }) => {
   }
 
   // Everything about room here
-
   const createRoom = async (roomName) => {
     /*This function creates a room document in firebase then extra calls are made to create a messages collection and users collection in the room also the roomID is added to the users list of rooms*/
     if (!roomName) return
@@ -349,26 +347,74 @@ const AppProvider = ({ children }) => {
             type: SET_CURRENT_ROOM_MESSAGES,
             payload: messages.reverse(),
           })
-          // const { userID, username } = messages[messages.length - 1]
-          // if (userID !== state.user.userID) {
-          //   errorNotify(
-          //     toast.info,
-          //     `new message from ${username || 'john doe'}`,
-          //     1000
-          //   )
-          // }
         }
       ),
     []
   )
 
   // Everything about chats here
+  const getChatInfo = useCallback(
+    (friendID) =>
+      // get chat info and all messaes in one call
+      onSnapshot(doc(firestoreDB, `chats/${friendID}`), (chatDoc) => {
+        dispatch({ type: SET_CURRENT_CHAT, payload: chatDoc.data() })
+      }),
+    []
+  )
 
+  const getChatMessages = useCallback(
+    (friendID) =>
+      onSnapshot(
+        query(
+          collection(firestoreDB, `chats/${friendID}/messages`),
+          orderBy('createdAt', 'desc'),
+          limit(25)
+        ),
+        (chatSnapshot) => {
+          let messages = []
+          chatSnapshot.forEach((doc) => {
+            const { message, userID, username, time } = doc.data()
+            messages.push({ userID, message, username, time })
+          })
+          dispatch({
+            type: SET_CURRENT_CHAT_MESSAGES,
+            payload: messages.reverse(),
+          })
+        }
+      ),
+    []
+  )
+
+  const getFriendInfo = useCallback(
+    (friendID) =>
+      // get chat info and all messaes in one call
+      onSnapshot(doc(firestoreDB, `users/${friendID}`), (friendDoc) => {
+        dispatch({ type: SET_CURRENT_CHAT_FRIEND, payload: friendDoc.data() })
+      }),
+    []
+  )
+
+  // Send Message
   const sendMessage = async (roomID, message) => {
     try {
       await addDoc(collection(firestoreDB, `rooms/${roomID}/messages`), {
         message: message,
-        username: state.user.username || state.user.email,
+        username: state.user_info.username,
+        userID: state.user.userID,
+        time: new Date().toISOString(),
+        createdAt: serverTimestamp(),
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  // Send Message
+  const sendChatMessage = async (friendID, message) => {
+    try {
+      await addDoc(collection(firestoreDB, `chats/${friendID}/messages`), {
+        message: message,
+        username: state.user_info.username,
         userID: state.user.userID,
         time: new Date().toISOString(),
         createdAt: serverTimestamp(),
@@ -443,6 +489,16 @@ const AppProvider = ({ children }) => {
         doc(firestoreDB, `users/${state.user.userID}/friends/${data.friendID}`),
         data
       )
+      await setDoc(doc(firestoreDB, `chats/${data.friendID}/`), {
+        friendID: data.friendID,
+        settings: {},
+      })
+      // creates the first message along with the user info
+      addDoc(collection(firestoreDB, `chats/${data.friendID}/messages`), {
+        message: 'Hello, I just added you',
+        username: state.user_info.username,
+        userID: state.user.userID,
+      })
       success = true
       errorNotify(toast.success, `You and ${data.username} are now friends`)
     } catch (err) {
@@ -512,7 +568,11 @@ const AppProvider = ({ children }) => {
         getRoomInfo,
         getRoomMessages,
         getRoomUsers,
+        getChatInfo,
+        getChatMessages,
+        getFriendInfo,
         sendMessage,
+        sendChatMessage,
       }}
     >
       {state.page_loading ? (
