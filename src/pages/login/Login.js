@@ -1,6 +1,7 @@
 import React, { useRef } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { useAuthState } from 'react-firebase-hooks/auth'
+import { Link } from 'react-router-dom'
+
+import { useMyAuthState } from '../../firebase/firebaseUtils'
 
 import { ReactComponent } from '../../assets/chat-conversation-svgrepo-com.svg'
 
@@ -10,8 +11,7 @@ import { Button } from '../../components/Button'
 import { ButtonAuth as LoginButton } from '../../components/ButtonAuth'
 
 const Login = () => {
-  const navigate = useNavigate('/')
-  const [user, loading, error] = useAuthState(auth)
+  const [, loading, error] = useMyAuthState(auth)
   const emailRef = useRef(null)
   const passwordRef = useRef(null)
 
@@ -20,24 +20,12 @@ const Login = () => {
       // Error Notification here
       return
     }
-    // login(emailRef.current.value, passwordRef.current.value)
-    emailRef.current.value = ''
-    passwordRef.current.value = ''
-    navigate('/')
-    console.log('trigerred')
+    login(emailRef.current.value, passwordRef.current.value)
   }
   const handleGoogleAuth = () => {}
-
-  if (loading) {
-    // return Loading goes here
-  }
-
   if (error) {
     // return Some Error messsage
-  }
-
-  if (user) {
-    // return
+    return <div>Error</div>
   }
 
   return (
@@ -58,7 +46,11 @@ const Login = () => {
         <div className='h-12'>
           <input type='password' ref={passwordRef} placeholder='Password' />
         </div>
-        <LoginButton loading={loading} handleSubmit={handleSubmit} />
+        <LoginButton
+          loading={loading}
+          handleSubmit={handleSubmit}
+          name={'Sign in'}
+        />
       </form>
       <p className={`text-xl text-light-main mb-2`}>or</p>
       <Button handleClick={handleGoogleAuth} name='Sign in with Google' />

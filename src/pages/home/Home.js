@@ -1,11 +1,9 @@
+import { useState } from 'react'
+import { useStoreState } from 'easy-peasy'
 import { ChatsTab } from './ChatsTab'
-import { RoomTab } from './RoomTab'
-import { HomePreview } from './HomePreview'
-import { ChatPreview } from './ChatPreview'
+import { HomeBody } from './HomeBody'
 import { Menu } from './Menu'
-import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import { ErrorBoundary } from 'react-error-boundary'
+import { RoomTab } from './RoomTab'
 
 import Header from './Header'
 import Modal from './Modal'
@@ -13,6 +11,7 @@ import Modal from './Modal'
 const Home = () => {
   const [tab, setTab] = useState('chats')
   const [modal, setModal] = useState(false)
+  const user = useStoreState((state) => state.user)
 
   return (
     <main className='min-h-screen grid grid-cols-1'>
@@ -25,8 +24,7 @@ const Home = () => {
           <RoomTab tab={tab} setTab={setTab} />
           <Menu tab={tab} setModal={setModal} />
         </div>
-        <ChatPreview tab={tab} />
-        <HomePreview tab={tab} setModal={setModal} />
+        {<HomeBody tab={tab} setModal={setModal} />}
       </section>
       <div className='flex justify-end'>
         {modal.show && <Modal type={modal.type} setModal={setModal} />}

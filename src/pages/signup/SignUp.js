@@ -1,42 +1,29 @@
-import React, { useRef } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth'
-
+import React, { useEffect, useRef } from 'react'
+import { Link } from 'react-router-dom'
+import { useCreateUserInFirestore } from './firebasehelper'
 import { ReactComponent } from '../../assets/chat-conversation-svgrepo-com.svg'
-
-import { auth } from '../../firebase/firebase'
 import { ButtonAuth as LoginButton } from '../../components/ButtonAuth'
 
 const SignUp = () => {
-  const navigate = useNavigate('/')
+  const [createUserWithEmailAndPassword, , loading, error] =
+    useCreateUserInFirestore()
   const emailRef = useRef(null)
   const passwordRef = useRef(null)
-  const [createUserWithEmailAndPassword, user, loading, error] =
-    useCreateUserWithEmailAndPassword(auth)
+  const confirmRef = useRef(null)
 
   const handleSubmit = () => {
     if (!emailRef.current.value || !passwordRef.current.value) {
       // Error Notification here
       return
     }
-    // createUserWithEmailAndPassword(emailRef.current.value, passwordRef.current.value)
-    emailRef.current.value = ''
-    passwordRef.current.value = ''
-    navigate('/')
-    console.log('trigerred')
-  }
-  const handleGoogleAuth = () => {}
-
-  if (loading) {
-    // return Loading goes here
-  }
-
-  if (error) {
-    // return Some Error messsage
-  }
-
-  if (user) {
-    // return
+    if (passwordRef.current.value !== confirmRef.current.value) {
+      //Set error notification here
+      return
+    }
+    createUserWithEmailAndPassword(
+      emailRef.current.value,
+      passwordRef.current.value
+    )
   }
 
   return (
@@ -57,7 +44,18 @@ const SignUp = () => {
         <div className='h-12'>
           <input type='password' ref={passwordRef} placeholder='Password' />
         </div>
-        <LoginButton loading={loading} handleSubmit={handleSubmit} />
+        <div className='h-12'>
+          <input
+            type='password'
+            placeholder='Confirm password'
+            ref={confirmRef}
+          />
+        </div>
+        <LoginButton
+          loading={loading}
+          handleSubmit={handleSubmit}
+          name='Sign up'
+        />
       </form>
       <div className='text-light-text text mt-6'>
         <p>
