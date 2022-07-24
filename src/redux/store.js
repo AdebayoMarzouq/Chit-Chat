@@ -20,6 +20,9 @@ export const store = createStore({
     state.user = payload
     console.log('rest ==>', debug(state))
   }),
+  addEditUserInfo: action((state, payload) => {
+    state.user = { ...state.user, ...payload }
+  }),
   saveUserToDB: thunk(async (actions, payload, helpers) => {
     const { user } = helpers.getState()
     const { uid, username, firstname, lastname, about } = user
@@ -88,6 +91,36 @@ export const store = createStore({
     } catch (error) {
       console.log(error)
       // errorNotify(toast.error, 'An error occured while creating room')
+    }
+  }),
+  joinRoom: thunk(async (actions, payload, helpers) => {
+    /*This thunk creates a */
+    if (!payload) return
+    const { user } = helpers.getState()
+    const [, roomID, name] = payload.split('/')
+    console.log(roomID, ' ', name, ' ', payload)
+    try {
+      // adds first user or precisely the user that created the room to the room
+      await addDoc(collection(firestoreDB, `rooms/${roomID}/users`), {
+        username: user.username,
+        userID: user.uid,
+        role: 'Member',
+      })
+      await setDoc(
+        // add the room info to the list of rooms the user is in
+        doc(firestoreDB, `users/${user.uid}/rooms/${roomID}`),
+        {
+          roomID: roomID,
+          roomPath: `rooms/${roomID}`,
+          roomName: name,
+          roomPic: Math.ceil(Math.random() * 6),
+          roomInfo: '',
+        }
+      )
+      // errorNotify(toast.success, `Joined ${name} room`)
+    } catch (error) {
+      console.log(error)
+      // errorNotify(toast.error, `An error occured while joining ${name}`)
     }
   }),
   sendMessage: thunk(async (actions, payload, helpers) => {

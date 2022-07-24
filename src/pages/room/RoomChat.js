@@ -52,7 +52,8 @@ const RoomChat = () => {
         <div className='space-y-4 overflow-y-auto'>
           {roomLoading ? (
             <div className='sub-loading'></div>
-          ) : values ? (
+          ) : (
+            values &&
             values.map((message) => {
               return (
                 <MessageBubble
@@ -64,8 +65,6 @@ const RoomChat = () => {
                 />
               )
             })
-          ) : (
-            <p>An error occured</p>
           )}
           <div ref={bottomRef}></div>
         </div>

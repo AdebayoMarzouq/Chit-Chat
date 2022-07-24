@@ -12,24 +12,26 @@ import { firestoreDB } from '../../firebase/firebase'
 const ChatChat = () => {
   const bottomRef = useRef(null)
   const inputRef = useRef(null)
-  const { friendID, friendData, friendLoading, friendError } =
-    useOutletContext()
+  const { chatID, roomData } = useOutletContext()
   const { uid } = useStoreState((state) => state.user)
   const [messages, messagesLoading, messagesError, messagesSnapShot] =
     useCollectionData(
       query(
-        collection(firestoreDB, `chats/${friendData.chatID}/messages`),
+        collection(firestoreDB, `chats/${chatID}/messages`),
         orderBy('createdAt'),
         limit(25)
       )
     )
-  console.log('chat messages ===> ', messages)
+
+  const data = Object.values(roomData.people)
+  const friendData = data.filter((item) => item.uid !== uid)
+
   const sendMessage = useStoreActions((actions) => actions.sendMessage)
-  console.log(friendData)
+
   const handleSubmit = (e) => {
     e.preventDefault()
     sendMessage({
-      path: `chats/${friendData.chatID}`,
+      path: `chats/${chatID}`,
       message: inputRef.current.value,
     })
     inputRef.current.value = ''
@@ -40,7 +42,6 @@ const ChatChat = () => {
     bottomRef.current.scrollIntoView(true)
 
     // eslint-disable-next-line
-    //messages
   }, [messages])
 
   return (
@@ -48,8 +49,8 @@ const ChatChat = () => {
       <section className='relative pt-20 space-y-4 px-4'>
         {friendData && (
           <ChatHeader
-            name={friendData.username || 'moyin'}
-            profileUrl={friendData.profileUrl || '1'}
+            name={friendData.username}
+            profileUrl={friendData.profileUrl}
           />
         )}
         <div className='space-y-4 overflow-y-auto'>
@@ -61,7 +62,6 @@ const ChatChat = () => {
                   type={message.userID === uid ? 'right' : 'left'}
                   text={message.message}
                   time={message.time}
-                  name={message.userID !== uid && message.username}
                 />
               )
             })}

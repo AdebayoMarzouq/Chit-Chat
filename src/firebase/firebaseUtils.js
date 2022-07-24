@@ -86,32 +86,64 @@ export const useAddFriend = () => {
       //     })
       //   }
       // }
-      const docRef = doc(
+      const docRef1 = doc(
         firestoreDB,
-        `users/${user.uid}/chats/${data.friendID}`
+        `users/${user.uid}/friends/${data.friendID}`
       )
-      const docSnap = await getDoc(docRef)
-      console.log(docSnap.exists())
-      if (!docSnap.exists()) {
+      const docRef2 = doc(
+        firestoreDB,
+        `users/${data.friendID}/friends/${user.uid}`
+      )
+      const docSnap1 = await getDoc(docRef1)
+      const docSnap2 = await getDoc(docRef2)
+      console.log(docSnap1.exists(), docSnap2.exists())
+      if (!docSnap1.exists() && !docSnap2.exists()) {
         await setDoc(doc(firestoreDB, `chats/${refId}`), {
           creator: user.uid,
-          people: [user.uid, data.friendID],
+          chatID: refId,
+          people: {
+            [user.uid]: {
+              username: user.username,
+              uid: user.userID,
+              photoUrl: user.photoUrl || user.profileUrl,
+              about: user.about,
+            },
+            [data.friendID]: {
+              username: data.username,
+              uid: data.friendID,
+              photoUrl: data.photoUrl,
+              about: data.about,
+            },
+          },
           settings: {},
           updated: serverTimestamp(),
         })
         await setDoc(
-          doc(firestoreDB, `users/${user.uid}/chats/${data.friendID}`),
-          {
-            chatID: refId,
-            friendID: data.friendID,
-          }
+          doc(firestoreDB, `users/${user.uid}/friends/${data.friendID}`),
+          data
         )
+        await setDoc(doc(firestoreDB, `users/${user.uid}/chats/${refId}`), {
+          chatID: refId,
+          friendID: data.friendID,
+          friendData: data,
+        })
         await setDoc(
-          doc(firestoreDB, `users/${data.friendID}/chats/${user.uid}`),
+          doc(firestoreDB, `users/${data.friendID}/chats/${refId}`),
           {
             chatID: refId,
             friendID: user.uid,
+            friendData: {
+              username: user.username,
+              uid: user.userID,
+              photoUrl: user.photoUrl || user.profileUrl,
+              about: user.about,
+            },
           }
+        )
+      } else if (docSnap2.exists()) {
+        await setDoc(
+          doc(firestoreDB, `users/${user.uid}/friends/${data.friendID}`),
+          data
         )
       }
       // await setDoc(

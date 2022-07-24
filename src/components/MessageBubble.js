@@ -13,7 +13,7 @@ const MessageBubble = ({ type, text, time, name = false }) => {
         <div
           className={`${
             type === 'right' ? 'bg-light-bubble2' : 'bg-light-bubble1'
-          } rounded-lg px-4 py-2 text-xs text-light-chat flex-shrink shadow`}
+          } rounded-lg px-2 py-1 text-xs text-light-chat flex-shrink shadow`}
         >
           {name && (
             <h3 className='font-bold text-light-title capitalize tracking-wide text-sm'>

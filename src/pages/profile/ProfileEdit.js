@@ -6,7 +6,7 @@ import { useStoreState, useStoreActions } from 'easy-peasy'
 const Editprofile = () => {
   const navigate = useNavigate()
   const [updateUser, saveUser] = useStoreActions((actions) => [
-    actions.addUserInfo,
+    actions.addEditUserInfo,
     actions.saveUserToDB,
   ])
   const { username, firstname, lastname, profileUrl, about } = useStoreState(

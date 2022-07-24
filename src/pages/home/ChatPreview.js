@@ -35,8 +35,8 @@ export function ChatPreview({ tab }) {
   )
 }
 
-const PreviewItem = ({ username, about, friendID, chatID, photoUrl }) => (
-  <Link to={`/chat/${friendID}`} className='flex justify-start'>
+const PreviewItem = ({ chatID, friendData: { username, photoUrl, about } }) => (
+  <Link to={`/chat/${chatID}`} className='flex justify-start'>
     <div className='relative rounded-full w-12 h-12 flex-shrink-0'>
       <img
         src={require(`../../assets/images/${photoUrl}.png`)}

@@ -4,7 +4,10 @@ import { XIcon } from '@heroicons/react/outline'
 import { useStoreActions } from 'easy-peasy'
 
 const Modal = ({ type, setModal }) => {
-  const [createRoom] = useStoreActions((actions) => [actions.createRoom])
+  const [createRoom, joinRoom] = useStoreActions((actions) => [
+    actions.createRoom,
+    actions.joinRoom,
+  ])
   const [roomName, setRoomName] = React.useState('')
   const [roomLink, setRoomLink] = React.useState('')
 
@@ -23,10 +26,10 @@ const Modal = ({ type, setModal }) => {
   }
 
   const handleJoin = () => {
-    // if (!roomLink) return
-    // setRoomLink('')
-    // joinRoom(roomLink)
-    // setModal((prev) => !prev)
+    if (!roomLink) return
+    setRoomLink('')
+    joinRoom(roomLink)
+    setModal((prev) => !prev)
   }
 
   const handleJoinChange = (e) => {

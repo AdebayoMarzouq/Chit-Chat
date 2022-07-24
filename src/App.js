@@ -82,15 +82,15 @@ const App = () => {
           </Route>
           {/* chat */}
           <Route
-            path='/chat/:friendID'
+            path='/chat/:chatID'
             element={
               <ProtectedRoute user={user}>
                 <ChatContainer />
               </ProtectedRoute>
             }
           >
-            <Route path='/chat/:friendID/' element={<ChatChat />} />
-            <Route path='/chat/:friendID/settings' element={<ChatInfo />} />
+            <Route path='/chat/:chatID/' element={<ChatChat />} />
+            <Route path='/chat/:chatID/settings' element={<ChatInfo />} />
           </Route>
         </Routes>
       </ErrorBoundary>
