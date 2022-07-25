@@ -38,7 +38,7 @@ export const User = ({
     <>
       <div className='relative flex items-center space-x-4'>
         <img
-          className='rounded-full h-24 w-24 ring-4 ring-light-main shrink-0 object-cover'
+          className='rounded-full h-24 w-24 shadow-inner shrink-0 object-cover'
           src={
             isNaN(parseInt(photoUrl))
               ? photoUrl
@@ -66,15 +66,15 @@ export const User = ({
           <SetIcon />
         </button>
       </div>
-      <div className='space-y-1'>
+      <div className=''>
         <h4 className='text-sm text-light-chat'>Username</h4>
         <h2 className='text-xl text-light-title'>{username}</h2>
       </div>
-      <div className='space-y-1'>
+      <div className=''>
         <h4 className='text-sm text-light-chat'>Email</h4>
         <h2 className='text-xl text-light-title'>{email}</h2>
       </div>
-      <div className='space-y-1'>
+      <div className=''>
         <h4 className='text-sm text-light-chat'>About</h4>
         <h2 className='text-sm text-light-title'>{about}</h2>
       </div>

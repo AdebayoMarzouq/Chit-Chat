@@ -50,10 +50,9 @@ const RoomChat = () => {
       <section className='relative pt-20 space-y-4 px-4'>
         <RoomHeader name={name} />
         <div className='space-y-4 overflow-y-auto'>
-          {roomLoading ? (
+          {loading ? (
             <div className='sub-loading'></div>
-          ) : (
-            values &&
+          ) : values.length ? (
             values.map((message) => {
               return (
                 <MessageBubble
@@ -65,6 +64,10 @@ const RoomChat = () => {
                 />
               )
             })
+          ) : (
+            <div className='text-gray-500 text-center'>
+              There are no messages in this room yet
+            </div>
           )}
           <div ref={bottomRef}></div>
         </div>

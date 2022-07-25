@@ -1,14 +1,16 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Outlet, useParams } from 'react-router-dom'
-import { doc, collection } from 'firebase/firestore'
+import { doc } from 'firebase/firestore'
 import { useDocumentData } from 'react-firebase-hooks/firestore'
+import { ErrorBoundary } from 'react-error-boundary'
 
 import { firestoreDB } from '../../firebase/firebase'
-import { useStoreState } from 'easy-peasy'
+import { ErrorFallbackCustom } from '../../components'
+import { PageError1 } from '../../components'
 
 const ChatContainer = () => {
   const { chatID } = useParams()
-  // const user = useStoreState((state) => state.user)
+  const [reset, setReset] = useState(false)
   const [roomData, roomLoading, roomError] = useDocumentData(
     doc(firestoreDB, `chats/${chatID}`)
   )
@@ -16,8 +18,20 @@ const ChatContainer = () => {
   //   doc(firestoreDB, `users/${friendID}`)
   // )
   if (roomLoading) return <div className='sub-loading'></div>
-  if (roomError) return <div>An error occured while fetching messages</div>
-  return <Outlet context={{ chatID, roomData }} />
+  if (roomError)
+    return <PageError1 error='Oh oh an error occured' reset={setReset} />
+
+  return (
+    <ErrorBoundary
+      FallbackComponent={ErrorFallbackCustom}
+      onReset={() => {
+        setReset((x) => !x)
+      }}
+      resetKeys={[reset]}
+    >
+      <Outlet context={{ chatID, roomData }} />
+    </ErrorBoundary>
+  )
 }
 
 export default ChatContainer

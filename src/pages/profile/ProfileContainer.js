@@ -14,7 +14,7 @@ const ProfileContainer = () => {
 
   return (
     <>
-      <header className='grid grid-cols-3 justify-center items-center h-20'>
+      <header className='header-bg grid grid-cols-3 justify-center items-center h-20 text-gray-100'>
         <button
           onClick={() => {
             if (pathname === '/profile') {
@@ -28,12 +28,12 @@ const ProfileContainer = () => {
             navigate(-1)
           }}
         >
-          <ChevronLeftIcon className='h-8 w-8 text-light-main' />
+          <ChevronLeftIcon className='h-8 w-8 text-white' />
         </button>
-        <h1 className='text-xl text-light-title font-bold'>My Profile</h1>
+        <h1 className='text-xl font-bold tracking-widest'>My Profile</h1>
         {pathname === '/profile' && (
           <button
-            className='flex justify-end space-x-2 text-light-main mr-2'
+            className='flex justify-end space-x-2 text-gray-200 mr-2'
             onClick={handleSignOut}
           >
             <p className='underline'>Log out</p>

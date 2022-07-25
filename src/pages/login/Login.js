@@ -1,21 +1,26 @@
-import React, { useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import { useMyAuthState } from '../../firebase/firebaseUtils'
 
 import { ReactComponent } from '../../assets/chat-conversation-svgrepo-com.svg'
 
-import { auth } from '../../firebase/firebase'
-import { login } from '../../firebase/firebaseUtils'
 import { Button } from '../../components/Button'
 import { ButtonAuth as LoginButton } from '../../components/ButtonAuth'
+import { auth } from '../../firebase/firebase'
+import { login } from '../../firebase/firebaseUtils'
+import { useStoreState } from 'easy-peasy'
 
 const Login = () => {
-  const [, loading, error] = useMyAuthState(auth)
+  const user = useStoreState((state) => state.user)
+  const [regUser, autherror, status, setStatus] = useMyAuthState()
   const emailRef = useRef(null)
   const passwordRef = useRef(null)
 
   const handleSubmit = () => {
+    setStatus((prev) => {
+      return { ...prev, loading: true }
+    })
     if (!emailRef.current.value || !passwordRef.current.value) {
       // Error Notification here
       return
@@ -23,10 +28,6 @@ const Login = () => {
     login(emailRef.current.value, passwordRef.current.value)
   }
   const handleGoogleAuth = () => {}
-  if (error) {
-    // return Some Error messsage
-    return <div>Error</div>
-  }
 
   return (
     <main className='min-h-screen flex flex-col items-center px-4 py-8'>
@@ -47,7 +48,7 @@ const Login = () => {
           <input type='password' ref={passwordRef} placeholder='Password' />
         </div>
         <LoginButton
-          loading={loading}
+          loading={status.loading}
           handleSubmit={handleSubmit}
           name={'Sign in'}
         />

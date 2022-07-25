@@ -1,12 +1,16 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { ErrorBoundary } from 'react-error-boundary'
 import { query, orderBy, collection } from 'firebase/firestore'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
 import { useStoreState } from 'easy-peasy'
 
+import { ErrorFallback } from '../../components'
 import { firestoreDB } from '../../firebase/firebase'
+import { useState } from 'react'
 
 export function ChatPreview({ tab }) {
+  const [retry, setRetry] = useState(false)
   const { uid } = useStoreState((state) => state.user)
   const [values, loading, error, snapShot] = useCollectionData(
     query(
@@ -15,10 +19,17 @@ export function ChatPreview({ tab }) {
     )
   )
 
-  if (!values) return <div className='sub-loading'></div>
+  console.log(values, loading, error)
+  if (loading) return <div className='sub-loading'></div>
 
   return (
-    <>
+    <ErrorBoundary
+      FallbackComponent={ErrorFallback}
+      onReset={() => {
+        setRetry((x) => !x)
+      }}
+      resetKeys={[retry]}
+    >
       {tab === 'chats' && (
         <div className='space-y-6 overflow-y-auto p-1 pr-0'>
           {values && !values.length ? (
@@ -31,7 +42,7 @@ export function ChatPreview({ tab }) {
           )}
         </div>
       )}
-    </>
+    </ErrorBoundary>
   )
 }
 

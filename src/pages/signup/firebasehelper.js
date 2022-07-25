@@ -4,9 +4,12 @@ import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { doc, setDoc } from 'firebase/firestore'
 import { adjectives, names, uniqueNamesGenerator } from 'unique-names-generator'
 import { auth, firestoreDB } from '../../firebase/firebase'
+import { toast } from 'react-toastify'
+import { useUserContext } from '../../context'
 
 export const useCreateUserInFirestore = () => {
   const navigate = useNavigate()
+  const { notify } = useUserContext()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState()
   const [regUser, setRegUser] = useState({})
@@ -39,11 +42,13 @@ export const useCreateUserInFirestore = () => {
       await setDoc(doc(firestoreDB, 'users', uid), data)
       setRegUser(res.user)
       navigate('/')
+      notify(toast.success, 'User Created Successfully')
       setLoading(false)
     } catch (error) {
       console.log('Sign UP =>> ', error.code)
       setError(true)
       setLoading(false)
+      notify(toast.error, 'An error occured during sign up')
     }
   }
 

@@ -13,9 +13,11 @@ import { useNavigate, useOutletContext } from 'react-router-dom'
 import uuid from 'react-uuid'
 
 import { firestoreDB } from '../../firebase/firebase'
+import { useUserContext } from '../../context'
 
 const RoomInfo = () => {
   const navigate = useNavigate()
+  const { notify } = useUserContext()
   const [input, setInput] = React.useState('')
   const { roomID, values: roomData } = useOutletContext()
   const { name, creator } = roomData
@@ -48,7 +50,7 @@ const RoomInfo = () => {
           <input
             type='text'
             placeholder='Edit room name'
-            className='pl-0'
+            className='pl-0 bg-transparent'
             value={input}
             onChange={handleChange}
           />
@@ -68,10 +70,10 @@ const RoomInfo = () => {
         <li className='flex items-center justify-between pt-4 pb-1'>
           <h4 className='truncate text-sm text-light-main'>{`room/${roomID}/${name}`}</h4>
           <button
-            className='bg-white border border-gray-500 rounded-full ml-4 px-2 bg-opacity-40 active:scale-90 animate-bounce'
+            className='border border-light-title rounded-full ml-4 px-2 text-sm text-light-title py-0 bg-opacity-40 active:scale-90 animate-bounce'
             onClick={() => {
               navigator.clipboard.writeText(`room/${roomID}/${name}`)
-              // errorNotify(toast.info, 'Room link copied to clipboard', 2000)
+              notify(toast.info, 'Room link copied to clipboard', 2000)
             }}
           >
             copy

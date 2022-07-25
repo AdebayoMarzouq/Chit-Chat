@@ -38,7 +38,7 @@ const Modal = ({ type, setModal }) => {
 
   return (
     <div className='fixed z-50 top-0 left-0 h-screen w-screen bg-black bg-opacity-30 flex items-center place-content-center'>
-      <div className='relative bg-[#fafafa] min-h-32 w-11/12 p-2 rounded-lg shadow-md text-light-text'>
+      <div className='relative bg-[#fafafa] min-h-32 w-11/12 p-2 rounded-lg shadow-xl text-light-text'>
         <button
           className='absolute right-4 top-2'
           onClick={() => setModal(false)}

@@ -1,13 +1,17 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { query, orderBy, collection } from 'firebase/firestore'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
 import { useStoreState } from 'easy-peasy'
 
 import { firestoreDB } from '../../firebase/firebase'
+import { ErrorBoundary } from 'react-error-boundary'
+
+import { ErrorFallback } from '../../components'
 
 export function RoomPreview({ tab, setModal }) {
   const { uid } = useStoreState((state) => state.user)
+  const [retry, setRetry] = useState(false)
   const [values, loading, error, snapShot] = useCollectionData(
     query(
       collection(firestoreDB, `users/${uid}/rooms`)
@@ -16,7 +20,13 @@ export function RoomPreview({ tab, setModal }) {
   )
 
   return (
-    <>
+    <ErrorBoundary
+      Fallback={ErrorFallback}
+      onReset={() => {
+        setRetry((x) => !x)
+      }}
+      resetKeys={[retry]}
+    >
       {tab === 'rooms' && (
         <div className='space-y-6 overflow-y-auto p-1 pr-0'>
           {values && !values.length ? (
@@ -29,7 +39,7 @@ export function RoomPreview({ tab, setModal }) {
           )}
         </div>
       )}
-    </>
+    </ErrorBoundary>
   )
 }
 

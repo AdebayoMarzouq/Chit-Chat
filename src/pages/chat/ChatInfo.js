@@ -1,16 +1,23 @@
-import React from 'react'
-import {
-  ChevronRightIcon,
-  ChevronLeftIcon,
-  ChevronDownIcon,
-} from '@heroicons/react/outline'
+import { ChevronLeftIcon } from '@heroicons/react/outline'
+import { useStoreState } from 'easy-peasy'
+import React, { useState } from 'react'
 import { useNavigate, useOutletContext } from 'react-router-dom'
+import { ErrorBoundary } from 'react-error-boundary'
+import { ErrorFallbackCustom } from '../../components'
+import { UserCard } from './UserCard'
 
 const ChatInfo = () => {
   const navigate = useNavigate()
-  const { friendID, friendData, friendLoading, friendError } =
-    useOutletContext()
-  const { firstname, lastname, profileUrl, username, about } = friendData
+  const [reset, setReset] = useState(false)
+  const { uid } = useStoreState((state) => state.user)
+  const { roomData } = useOutletContext()
+
+  const data = Object.values(roomData.people)
+  const friendData = data.filter((item) => item.uid !== uid)[0]
+
+  console.log(friendData)
+
+  const { firstname, lastname, photoUrl, username, about } = friendData
 
   return (
     <main className='flex flex-col space-y-4 py-4 px-4'>
@@ -19,19 +26,22 @@ const ChatInfo = () => {
           <ChevronLeftIcon className='h-8 w-8 text-light-main' />
         </button>
       </div>
-      <div className='flex place-content-center'>
-        <img
-          src={require(`../../assets/images/${profileUrl}.png`)}
-          alt='profile'
-          className='h-32 w-32'
+      <ErrorBoundary
+        FallbackComponent={ErrorFallbackCustom}
+        onReset={() => {
+          setReset((x) => !x)
+        }}
+        resetKeys={[reset]}
+      >
+        <UserCard
+          require={require}
+          photoUrl={photoUrl}
+          username={username}
+          firstname={firstname}
+          lastname={lastname}
+          about={about}
         />
-      </div>
-      <div className=''>
-        <h2 className='text-center text-3xl text-light-title'>{username}</h2>
-        <h4 className='text-center text-gray-400'>{firstname}</h4>
-        <h4 className='text-center text-gray-400'>{lastname}</h4>
-        <h4 className='text-center text-gray-400'>{about}</h4>
-      </div>
+      </ErrorBoundary>
     </main>
   )
 }

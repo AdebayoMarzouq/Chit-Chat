@@ -6,10 +6,10 @@ const RoomHeader = ({ name, img }) => {
   const navigate = useNavigate()
 
   return (
-    <div className='fixed top-0 left-0 right-0 h-20 px-2 py-4 bg-[#fafafa] flex flex-col border-b border-light-bubble1'>
+    <div className='header-bg fixed top-0 left-0 right-0 h-20 px-2 py-4 flex flex-col border-b border-light-bubble1'>
       <div className='relative pl-16 flex items-center'>
         <button
-          className='absolute -left-2 text-light-main text-sm flex items-center'
+          className='absolute -left-2 text-gray-100 text-sm flex items-center'
           onClick={() => navigate(-1)}
         >
           <span>
@@ -25,7 +25,7 @@ const RoomHeader = ({ name, img }) => {
           />
         </div>
         {name ? (
-          <h1 className='ml-4 mr-2 font-bold text-light-main text-lg tracking-widest truncate'>
+          <h1 className='ml-4 mr-2 text-gray-100 text-lg tracking-wider truncate'>
             {name}
           </h1>
         ) : (
@@ -35,7 +35,7 @@ const RoomHeader = ({ name, img }) => {
           className='ml-auto flex flex-shrink-0 mr-2'
           onClick={() => navigate('info')}
         >
-          <ViewListIcon className='text-gray-400 w-8 animate-bounce' />
+          <ViewListIcon className='text-gray-200 w-8 animate-bounce' />
         </button>
       </div>
     </div>

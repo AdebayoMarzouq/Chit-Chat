@@ -21,6 +21,7 @@ const RoomInfo = lazy(() => import('./pages/room/RoomInfo'))
 const ChatContainer = lazy(() => import('./pages/chat/ChatContainer'))
 const ChatChat = lazy(() => import('./pages/chat/ChatChat'))
 const ChatInfo = lazy(() => import('./pages/chat/ChatInfo'))
+const Error = lazy(() => import('./pages/Error'))
 
 const App = () => {
   const user = useStoreState((state) => state.user)
@@ -92,6 +93,7 @@ const App = () => {
             <Route path='/chat/:chatID/' element={<ChatChat />} />
             <Route path='/chat/:chatID/settings' element={<ChatInfo />} />
           </Route>
+          <Route path='*' element={<Error />} />
         </Routes>
       </ErrorBoundary>
     </Suspense>

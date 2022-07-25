@@ -17,6 +17,10 @@ import { useEffect, useMemo, useState } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useNavigate } from 'react-router-dom'
 import { auth, firestoreDB } from './firebase'
+import { toast } from 'react-toastify'
+
+import { useUserContext } from '../context'
+import { notify } from '../redux/store'
 
 export const login = (email, password) => {
   signInWithEmailAndPassword(auth, email, password)
@@ -26,23 +30,8 @@ export const logout = () => {
   signOut(auth)
 }
 
-const checkCollection = async (subcollection) => {
-  console.log('sub===>', subcollection)
-  try {
-    const subcollectionRef = query(
-      collection(firestoreDB, subcollection),
-      limit(1)
-    )
-    const snapShot = await getDocs(subcollectionRef)
-    console.log('snapShot => ', snapShot)
-    return snapShot.empty
-  } catch (error) {
-    console.log(error)
-  }
-  return null
-}
-
 export const useAddFriend = () => {
+  const { notify } = useUserContext()
   const user = useStoreState((state) => state.user)
   const [error, setError] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -52,40 +41,6 @@ export const useAddFriend = () => {
     const refId = uuidv4()
     setLoading(true)
     try {
-      // const check = await checkCollection(`users/${user.uid}/chats`)
-      // if (!check) {
-      //   const docRef = doc(
-      //     firestoreDB,
-      //     `users/${user.uid}/chats/${data.friendID}`
-      //   )
-      //   console.log(docRef)
-      //   const docSnap = await getDocs(docRef)
-      //   console.log(docSnap)
-      //   if (!docSnap.exists()) {
-      //     await setDoc(
-      //       doc(firestoreDB, `users/${user.uid}/chats/${data.friendID}`),
-      //       {
-      //         ...data,
-      //         chatID: refId,
-      //       }
-      //     )
-      //     await setDoc(
-      //       doc(firestoreDB, `users/${data.friendID}/chats/${user.uid}`),
-      //       {
-      //         ...data,
-      //         chatID: refId,
-      //         friendID: user.uid,
-      //       }
-      //     )
-      //     await setDoc(doc(firestoreDB, `chats/${refId}/`), {
-      //       chatID: refId,
-      //       creatorID: user.uid,
-      //       friendID: data.friendID,
-      //       settings: {},
-      //       created: new Date().toISOString(),
-      //     })
-      //   }
-      // }
       const docRef1 = doc(
         firestoreDB,
         `users/${user.uid}/friends/${data.friendID}`
@@ -96,7 +51,7 @@ export const useAddFriend = () => {
       )
       const docSnap1 = await getDoc(docRef1)
       const docSnap2 = await getDoc(docRef2)
-      console.log(docSnap1.exists(), docSnap2.exists())
+
       if (!docSnap1.exists() && !docSnap2.exists()) {
         await setDoc(doc(firestoreDB, `chats/${refId}`), {
           creator: user.uid,
@@ -146,16 +101,12 @@ export const useAddFriend = () => {
           data
         )
       }
-      // await setDoc(
-      //   doc(firestoreDB, `users/${user.uid}/friends/${data.friendID}`),
-      //   { ...data, chatID: refId }
-      // )
-
       setSuccess(true)
-      // errorNotify(toast.success, `You and ${data.username} are now friends`)
+      notify(toast.success, `You are now friends with ${data.username}`)
     } catch (error) {
       console.log(error)
       setError(true)
+      notify(toast.error, `An error occured while adding ${data.username}`)
     } finally {
       setLoading(false)
     }
@@ -166,23 +117,27 @@ export const useAddFriend = () => {
 
 export const useMyAuthState = () => {
   const navigate = useNavigate()
-  const [value] = useAuthState(auth)
+  const [authvalue, authloading, autherror] = useAuthState(auth)
   const addUserInfo = useStoreActions((actions) => actions.addUserInfo)
   const [regUser, setRegUser] = useState(null)
-  const [error, setError] = useState(false)
-  const [loading, setLoading] = useState(false)
+  const [status, setStatus] = useState({ loading: false, error: false })
 
   useEffect(() => {
     let listener = () => {}
-    if (value) {
+    if (autherror) {
+      setStatus((prev) => {
+        return { ...prev, loading: false, error: true }
+      })
+    }
+    if (authvalue) {
       listener = onSnapshot(
-        doc(firestoreDB, `users/${value.uid}`),
+        doc(firestoreDB, `users/${authvalue.uid}`),
         (userDoc) => {
           if (userDoc.exists()) {
             const userData = {
-              uid: value.uid,
-              email: value.email,
-              photoUrl: value.photoURL,
+              uid: authvalue.uid,
+              email: authvalue.email,
+              photoUrl: authvalue.photoURL,
               ...userDoc.data(),
             }
             addUserInfo(userData)
@@ -195,20 +150,26 @@ export const useMyAuthState = () => {
         },
         (error) => {
           console.log('triggered', error)
-          setError(true)
-          // errorNotify(toast.error, error.code)
+          setStatus((prev) => {
+            return { ...prev, loading: false, error: true }
+          })
+          notify(toast.error, error.code)
         }
       )
     } else {
       addUserInfo(null)
+      setStatus((prev) => {
+        return { ...prev, loading: false }
+      })
       navigate('/login')
     }
+
     return () => {
-      listener()
+      listener() // unsubscribe from listener
     }
     // eslint-disable-next-line
-  }, [value])
+  }, [authvalue, autherror])
 
-  const resArray = [regUser, loading, error]
+  const resArray = [regUser, autherror, status, setStatus]
   return useMemo(() => resArray, resArray)
 }

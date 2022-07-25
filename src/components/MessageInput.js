@@ -1,17 +1,18 @@
 import React from 'react'
+import TextareaAutosize from 'react-textarea-autosize'
 import { PaperAirplaneIcon } from '@heroicons/react/solid'
 
 const MessageInput = ({ inputRef, handleSubmit }) => {
   return (
     <form className='flex space-x-2' onSubmit={(e) => e.preventDefault()}>
-      <input
-        type='text'
-        placeholder='Type your message...'
+      <TextareaAutosize
+        minRows={1}
+        maxRows={3}
         ref={inputRef}
-        className='placeholder-light-text placeholder-opacity-40 text-sm py-2 rounded-full'
+        className='my-textarea text-sm py-2 rounded-md overflow-hidden'
       />
       <button
-        className='text-light-main focus-visible:outline-light-bubble1'
+        className='self-end text-light-main focus-visible:outline-light-bubble1'
         onClick={handleSubmit}
       >
         <PaperAirplaneIcon className='w-6 h-6 transfrom rotate-90' />

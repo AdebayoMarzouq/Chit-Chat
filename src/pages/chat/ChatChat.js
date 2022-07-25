@@ -8,6 +8,7 @@ import { uuidv4 } from '@firebase/util'
 import { MessageBubble, MessageInput } from '../../components'
 import ChatHeader from './ChatHeader'
 import { firestoreDB } from '../../firebase/firebase'
+// import {pageError2}
 
 const ChatChat = () => {
   const bottomRef = useRef(null)
@@ -24,7 +25,8 @@ const ChatChat = () => {
     )
 
   const data = Object.values(roomData.people)
-  const friendData = data.filter((item) => item.uid !== uid)
+  const friendData = data.filter((item) => item.uid !== uid)[0]
+  console.log(friendData)
 
   const sendMessage = useStoreActions((actions) => actions.sendMessage)
 
@@ -47,14 +49,14 @@ const ChatChat = () => {
   return (
     <main className='min-h-screen grid grid-cols-1 pb-16'>
       <section className='relative pt-20 space-y-4 px-4'>
-        {friendData && (
-          <ChatHeader
-            name={friendData.username}
-            profileUrl={friendData.profileUrl}
-          />
-        )}
+        <ChatHeader
+          name={friendData.username}
+          profileUrl={friendData.profileUrl}
+        />
         <div className='space-y-4 overflow-y-auto'>
-          {messages &&
+          {messagesLoading ? (
+            <div className='sub-loading'></div>
+          ) : messages.length ? (
             messages.map((message) => {
               return (
                 <MessageBubble
@@ -64,7 +66,12 @@ const ChatChat = () => {
                   time={message.time}
                 />
               )
-            })}
+            })
+          ) : (
+            <div className='text-gray-500 text-center'>
+              No message in this chat yet
+            </div>
+          )}
           <div ref={bottomRef}></div>
         </div>
       </section>

@@ -19,7 +19,7 @@ const UsersContainer = () => {
 
   return (
     <main className='min-h-screen'>
-      <header className='grid grid-cols-3 justify-center items-center h-20 border-b border-light-main'>
+      <header className='header-bg grid grid-cols-3 justify-center items-center h-20 border-b border-light-main'>
         <button
           onClick={() => {
             if (pathname === '/users') {
@@ -29,10 +29,10 @@ const UsersContainer = () => {
             navigate(-1)
           }}
         >
-          <ChevronLeftIcon className='h-8 w-8 text-light-main' />
+          <ChevronLeftIcon className='h-8 w-8 text-gray-100' />
         </button>
-        <h1 className='text-center text-xl text-light-title font-bold'>
-          Users
+        <h1 className='text-center text-xl text-gray-100 tracking-widest font-bold'>
+          {pathname === '/users' ? 'Users' : 'User'}
         </h1>
         <div></div>
       </header>
@@ -41,7 +41,7 @@ const UsersContainer = () => {
           <input
             type='text'
             placeholder='Search...'
-            className='placeholder-light-text placeholder-opacity-40 text-sm py-2 focus:outline-none rounded-none pl-0'
+            className='bg-transparent placeholder-light-text placeholder-opacity-40 text py-2 focus:outline-none rounded-none pl-0'
             ref={searchRef}
           />
           <button className='text-gray-400' onClick={handleSearch}>

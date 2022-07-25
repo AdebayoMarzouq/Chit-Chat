@@ -13,6 +13,17 @@ import {
   updateDoc,
 } from 'firebase/firestore'
 import { firestoreDB } from '../firebase/firebase'
+import { toast } from 'react-toastify'
+
+export const notify = (type = toast, msg, time = 2000) => {
+  /*function that creates a notification using react-toastify library*/
+  type(msg, {
+    position: toast.POSITION.TOP_CENTER,
+    autoClose: time,
+    className: 'rounded-0 bg-light-toasttint',
+    bodyClassName: 'text-light-text',
+  })
+}
 
 export const store = createStore({
   user: null,
@@ -34,11 +45,10 @@ export const store = createStore({
         lastname: lastname,
         about: about,
       })
-      console.log('successfully updated')
-      // errorNotify(toast.success, 'Profile info changed successfully')
+      notify(toast.success, 'Profile info changed successfully')
     } catch (error) {
       console.log('user update error ===>', error.code, error.message)
-      // errorNotify(toast.error, error.code)
+      notify(toast.error, error.code)
     }
   }),
   createRoom: thunk(async (actions, payload, helpers) => {
@@ -54,12 +64,6 @@ export const store = createStore({
         updated: serverTimestamp(),
       })
       const promises = [
-        // creates the first message along with the user info
-        // addDoc(collection(firestoreDB, `rooms/${docRef.id}/messages`), {
-        //   message: 'Hello Room, I created this room',
-        //   username: user.username,
-        //   userID: user.userID,
-        // }),
         // adds first user or precisely the user that created the room to the room
         addDoc(collection(firestoreDB, `rooms/${docRef.id}/users`), {
           username: user.username,
@@ -87,27 +91,27 @@ export const store = createStore({
         .catch((error) => {
           console.log(error)
         })
-      // errorNotify(toast.success, 'Room created Successfully')
+      notify(toast.success, 'Room created Successfully')
     } catch (error) {
       console.log(error)
-      // errorNotify(toast.error, 'An error occured while creating room')
+      notify(toast.error, 'An error occured while creating room')
     }
   }),
   joinRoom: thunk(async (actions, payload, helpers) => {
-    /*This thunk creates a */
+    /*This thunk to allow a user join a room using a group link which is technically a combination of paths to the room along with the room name*/
     if (!payload) return
     const { user } = helpers.getState()
     const [, roomID, name] = payload.split('/')
     console.log(roomID, ' ', name, ' ', payload)
     try {
-      // adds first user or precisely the user that created the room to the room
+      // adds user to the room
       await addDoc(collection(firestoreDB, `rooms/${roomID}/users`), {
         username: user.username,
         userID: user.uid,
         role: 'Member',
       })
       await setDoc(
-        // add the room info to the list of rooms the user is in
+        // adds the room info to the list of rooms the user is in
         doc(firestoreDB, `users/${user.uid}/rooms/${roomID}`),
         {
           roomID: roomID,
@@ -117,13 +121,14 @@ export const store = createStore({
           roomInfo: '',
         }
       )
-      // errorNotify(toast.success, `Joined ${name} room`)
+      notify(toast.success, `Joined ${name} room`)
     } catch (error) {
       console.log(error)
-      // errorNotify(toast.error, `An error occured while joining ${name}`)
+      notify(toast.error, `An error occured while joining ${name}`)
     }
   }),
   sendMessage: thunk(async (actions, payload, helpers) => {
+    /*Allows user send messages to a room or chat using the path to the room*/
     const { user } = helpers.getState()
     try {
       await addDoc(collection(firestoreDB, `${payload.path}/messages`), {
