@@ -1,9 +1,14 @@
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useState } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import { Route, Routes } from 'react-router-dom'
 import 'react-toastify/dist/ReactToastify.min.css'
 import { ProtectedRoute } from './Protected'
-import { useStoreState } from 'easy-peasy'
+import { useUserContext } from './context'
+import { useStoreState, useStoreActions } from 'easy-peasy'
+
+import { useWindowDimensions } from './utils'
+
+import { Sidebar } from './components'
 
 const SignUp = lazy(() => import('./pages/signup/SignUp'))
 const Login = lazy(() => import('./pages/login/Login'))
@@ -25,78 +30,100 @@ const Error = lazy(() => import('./pages/Error'))
 
 const App = () => {
   const user = useStoreState((state) => state.user)
+  const { width, isOpen, setIsOpen } = useUserContext()
+
+  console.log(width)
 
   return (
-    <Suspense fallback={<div className='sub-loading'></div>}>
-      <ErrorBoundary fallback={<p>error occured!</p>}>
-        <Routes>
-          {/* login */}
-          <Route path='/login' element={<Login />} />
-          {/* sign up */}
-          <Route path='/signup' element={<SignUp />} />
-          {/* home */}
-          <Route
-            index
-            path='/'
-            element={
-              <ProtectedRoute>
-                <Home />
-              </ProtectedRoute>
-            }
-          />
-          {/* logged in user profile */}
-          <Route
-            path='/profile'
-            element={
-              <ProtectedRoute>
-                <ProfileContainer />
-              </ProtectedRoute>
-            }
-          >
-            <Route path='/profile' element={<Profile />} />
-            <Route path='/profile/settings' element={<ProfileSettings />} />
-            <Route path='/profile/settings/edit' element={<ProfileEdit />} />
-          </Route>
-          {/* users */}
-          <Route
-            path='/users'
-            element={
-              <ProtectedRoute>
-                <UsersContainer />
-              </ProtectedRoute>
-            }
-          >
-            <Route path='/users' element={<Users />} />
-            <Route path='/users/:userID' element={<UsersDetail />} />
-          </Route>
-          {/* room */}
-          <Route
-            path='/room/:roomID'
-            element={
-              <ProtectedRoute user={user}>
-                <RoomContainer />
-              </ProtectedRoute>
-            }
-          >
-            <Route path='/room/:roomID/' element={<RoomChat />} />
-            <Route path='/room/:roomID/info' element={<RoomInfo />} />
-          </Route>
-          {/* chat */}
-          <Route
-            path='/chat/:chatID'
-            element={
-              <ProtectedRoute user={user}>
-                <ChatContainer />
-              </ProtectedRoute>
-            }
-          >
-            <Route path='/chat/:chatID/' element={<ChatChat />} />
-            <Route path='/chat/:chatID/settings' element={<ChatInfo />} />
-          </Route>
-          <Route path='*' element={<Error />} />
-        </Routes>
-      </ErrorBoundary>
-    </Suspense>
+    <main
+      className={`grid min-h-screen grid-cols-1 md:flex  ${'theme-orange'}`}
+    >
+      {user?.uid && (
+        <Sidebar
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          width={width}
+          className='fixed md:static'
+        />
+      )}
+      <section className={`flex-grow`}>
+        <Suspense fallback={<div className='sub-loading'></div>}>
+          <ErrorBoundary fallback={<p>error occured!</p>}>
+            <Routes>
+              {/* login */}
+              <Route path='/login' element={<Login />} />
+              {/* sign up */}
+              <Route path='/signup' element={<SignUp />} />
+              {/* home */}
+              <Route
+                path='/'
+                element={
+                  <ProtectedRoute>
+                    <Home />
+                  </ProtectedRoute>
+                }
+              >
+                <Route path='/' element={<Home />} />
+                <Route path='/rooms' element={<Home />} />
+              </Route>
+              {/* logged in user profile */}
+              <Route
+                path='/profile'
+                element={
+                  <ProtectedRoute>
+                    <ProfileContainer />
+                  </ProtectedRoute>
+                }
+              >
+                <Route path='/profile' element={<Profile />} />
+                <Route path='/profile/settings' element={<ProfileSettings />} />
+                <Route
+                  path='/profile/settings/edit'
+                  element={<ProfileEdit />}
+                />
+              </Route>
+              {/* users */}
+              <Route
+                path='/users'
+                element={
+                  <ProtectedRoute>
+                    <UsersContainer />
+                  </ProtectedRoute>
+                }
+              >
+                <Route path='/users' element={<Users />} />
+                <Route path='/users/:userID' element={<UsersDetail />} />
+              </Route>
+              {/* room */}
+              <Route
+                path='/room/:roomID'
+                element={
+                  <ProtectedRoute user={user}>
+                    <RoomContainer />
+                  </ProtectedRoute>
+                }
+              >
+                <Route path='/room/:roomID/' element={<RoomChat />} />
+                <Route path='/room/:roomID/info' element={<RoomInfo />} />
+              </Route>
+              {/* chat */}
+              <Route
+                path='/chat/:chatID'
+                element={
+                  <ProtectedRoute user={user}>
+                    <ChatContainer />
+                  </ProtectedRoute>
+                }
+              >
+                <Route path='/chat/:chatID/' element={<ChatChat />} />
+                <Route path='/chat/:chatID/settings' element={<ChatInfo />} />
+              </Route>
+              <Route path='*' element={<Error />} />
+            </Routes>
+          </ErrorBoundary>
+        </Suspense>
+      </section>
+    </main>
   )
 }
 

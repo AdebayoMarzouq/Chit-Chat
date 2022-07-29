@@ -1,7 +1,6 @@
 import React from 'react'
 import { PencilIcon, ChevronRightIcon } from '@heroicons/react/outline'
 import { useNavigate } from 'react-router-dom'
-import { useStoreState } from 'easy-peasy'
 
 const ProfileSettings = () => {
   const navigate = useNavigate()

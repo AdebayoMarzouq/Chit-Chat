@@ -5,14 +5,14 @@ module.exports = {
     extend: {
       colors: {
         light: {
-          bg: '#ffffff',
-          main: '#0284c7',
-          maintint: '#38bdf8',
-          toasttint: '#bae6fd',
+          bg: 'var(--color-light-bg)',
+          main: 'var(--color-light-main)',
+          maintint: 'var(--color-light-maintint)',
+          toasttint: 'var(--color-light-toasttint)',
           text: '#374151',
           chat: '#111827',
           title: '#075985',
-          bubble1: '#38bdf861',
+          bubble1: 'var(--color-light-bubble1)',
           bubble2: '#cecece61',
         },
       },

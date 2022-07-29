@@ -8,21 +8,15 @@ import uuid from 'react-uuid'
 import RoomHeader from './RoomHeader'
 import { MessageInput, MessageBubble } from '../../components'
 import { firestoreDB } from '../../firebase/firebase'
-import { store } from '../../redux/store'
 
 const RoomChat = () => {
   const bottomRef = useRef(null)
   const inputRef = useRef(null)
   const { uid } = useStoreState((state) => state.user)
   const sendMessage = useStoreActions((actions) => actions.sendMessage)
-  const {
-    roomID,
-    values: roomData,
-    error: roomError,
-    loading: roomLoading,
-  } = useOutletContext()
+  const { roomID, values: roomData, loading: roomLoading } = useOutletContext()
   const { name } = roomData
-  const [values, loading, error, snapShot] = useCollectionData(
+  const [values, loading] = useCollectionData(
     query(
       collection(firestoreDB, `rooms/${roomID}/messages`),
       orderBy('createdAt'),

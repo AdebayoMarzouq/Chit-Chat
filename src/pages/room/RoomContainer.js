@@ -5,10 +5,9 @@ import { firestoreDB } from '../../firebase/firebase'
 
 const RoomContainer = () => {
   const { roomID } = useParams()
-  const [values, loading, error, snapShot] = useDocumentData(
+  const [values, loading, error] = useDocumentData(
     doc(firestoreDB, `rooms/${roomID}`)
   )
-  console.log(roomID, values)
 
   if (error) return <div className=''>could not fetch room</div>
   if (loading) return <div className='sub-loading'></div>

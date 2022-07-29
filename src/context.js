@@ -1,12 +1,15 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { toast, ToastContainer, Zoom } from 'react-toastify'
 
+import { useWindowDimensions } from './utils'
 import { useMyAuthState } from './firebase/firebaseUtils'
 
 const UserContext = React.createContext()
 
 export const UserProvider = ({ children }) => {
+  const [isOpen, setIsOpen] = useState(false)
   const [user, loading, error] = useMyAuthState()
+  const { width } = useWindowDimensions()
 
   function notify(type = toast, msg, time = 2000) {
     /*function that creates a notification using react-toastify library*/
@@ -19,7 +22,9 @@ export const UserProvider = ({ children }) => {
   }
 
   return (
-    <UserContext.Provider value={{ notify, user, loading, error }}>
+    <UserContext.Provider
+      value={{ width, isOpen, setIsOpen, notify, user, loading, error }}
+    >
       <>
         {children}
         <ToastContainer

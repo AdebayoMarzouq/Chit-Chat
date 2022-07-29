@@ -2,14 +2,9 @@ import { uuidv4 } from '@firebase/util'
 import { useStoreActions, useStoreState } from 'easy-peasy'
 import { signInWithEmailAndPassword, signOut } from 'firebase/auth'
 import {
-  collection,
   doc,
-  addDoc,
   getDoc,
-  getDocs,
-  limit,
   onSnapshot,
-  query,
   serverTimestamp,
   setDoc,
 } from 'firebase/firestore'
@@ -104,7 +99,6 @@ export const useAddFriend = () => {
       setSuccess(true)
       notify(toast.success, `You are now friends with ${data.username}`)
     } catch (error) {
-      console.log(error)
       setError(true)
       notify(toast.error, `An error occured while adding ${data.username}`)
     } finally {
@@ -117,7 +111,7 @@ export const useAddFriend = () => {
 
 export const useMyAuthState = () => {
   const navigate = useNavigate()
-  const [authvalue, authloading, autherror] = useAuthState(auth)
+  const [authvalue, autherror] = useAuthState(auth)
   const addUserInfo = useStoreActions((actions) => actions.addUserInfo)
   const [regUser, setRegUser] = useState(null)
   const [status, setStatus] = useState({ loading: false, error: false })
@@ -145,11 +139,9 @@ export const useMyAuthState = () => {
             navigate('/')
           } else {
             navigate('/login')
-            console.log('Could not fetch your info ===> ')
           }
         },
         (error) => {
-          console.log('triggered', error)
           setStatus((prev) => {
             return { ...prev, loading: false, error: true }
           })
@@ -171,5 +163,6 @@ export const useMyAuthState = () => {
   }, [authvalue, autherror])
 
   const resArray = [regUser, autherror, status, setStatus]
+  // eslint-disable-next-line
   return useMemo(() => resArray, resArray)
 }

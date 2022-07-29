@@ -1,4 +1,4 @@
-import React, { useState, memo } from 'react'
+import React, { useState } from 'react'
 import { useNavigate, useOutletContext } from 'react-router-dom'
 import {
   UserAddIcon,
@@ -9,8 +9,6 @@ import {
 import { ErrorBoundary } from 'react-error-boundary'
 import { ErrorFallbackCustom } from '../../components'
 import { PageError1 } from '../../components'
-import { faker } from '@faker-js/faker'
-import uuid from 'react-uuid'
 
 import { useAddFriend } from '../../firebase/firebaseUtils'
 
@@ -24,14 +22,14 @@ const Users = ({ className = '' }) => {
 
   return (
     <section>
-      <ErrorBoundary // FallbackComponent={ErrorFallback}
+      <ErrorBoundary
         FallbackComponent={ErrorFallbackCustom}
         onReset={() => {
           setRetry((x) => !x)
         }}
         resetKeys={[retry]}
       >
-        <ul className='ml-4 my-2'>
+        <ul className='my-2'>
           {values.length ? (
             values.map((user) => <User key={user.userID} {...user} />)
           ) : (
@@ -56,7 +54,7 @@ const User = ({
 }) => {
   const navigate = useNavigate()
   const [retry, setRetry] = useState(false)
-  const { addFriend, success, loading, error } = useAddFriend()
+  const { addFriend, success, loading } = useAddFriend()
 
   const handleAdd = () => {
     addFriend({
@@ -72,10 +70,10 @@ const User = ({
     if (loading) return <div className='add-loading h-4 w-4'></div>
     else if (success)
       return (
-        <CheckCircleIcon className='icon-list h-6 w-6 stroke-1 stroke-light-main' />
+        <CheckCircleIcon className='icon-list h-6 w-6 stroke-light-main stroke-1' />
       )
     return (
-      <UserAddIcon className='icon-list h-6 w-6 stroke-1 stroke-light-main' />
+      <UserAddIcon className='icon-list h-6 w-6 stroke-light-main stroke-1' />
     )
   }
 
@@ -83,7 +81,7 @@ const User = ({
     <ErrorBoundary
       // FallbackComponent={ErrorFallback}
       fallback={
-        <p className='text-red-500 text-sm text-center p-4'>
+        <p className='p-4 text-center text-sm text-red-500'>
           An error occured while fetching this user
         </p>
       }
@@ -92,8 +90,8 @@ const User = ({
       }}
       resetKeys={[retry]}
     >
-      <li className='py-4 flex items-center justify-between'>
-        <div className='space-x-2 flex items-center'>
+      <li className='flex items-center justify-between py-4 px-4 md:px-8'>
+        <div className='flex items-center space-x-2'>
           <img
             src={
               isNaN(parseInt(photoUrl))
@@ -101,7 +99,7 @@ const User = ({
                 : require(`../../assets/images/${photoUrl}.png`)
             }
             alt='profile'
-            className='flex-shrink-0 rounded-full border-2 border-light-main h-12 w-12'
+            className='h-12 w-12 flex-shrink-0 rounded-full ring-2 ring-light-main ring-offset-2'
           />
           <div className='flex flex-col'>
             <p className='truncate text-light-text'>
@@ -109,20 +107,20 @@ const User = ({
               <span> </span>
               {lastname}
             </p>
-            <p className='text-sm flex items-center'>
+            <p className='flex items-center text-sm'>
               <AtSymbolIcon className='h-4 w-4 text-light-main' />
               <span className='text-gray-400'>{username}</span>
             </p>
           </div>
         </div>
-        <div className='mr-4 flex items-center text-gray-400 space-x-2'>
+        <div className='flex items-center space-x-2 text-gray-400'>
           <button
             className=''
             onClick={() => {
               navigate(`${userID}`)
             }}
           >
-            <EyeIcon className='icon-list h-6 w-6 stroke-1 stroke-light-main' />
+            <EyeIcon className='icon-list h-6 w-6 stroke-light-main stroke-1' />
           </button>
           <button className='' onClick={handleAdd}>
             <SetIcon />

@@ -1,5 +1,5 @@
 import React from 'react'
-import { ExclamationCircleIcon, RefreshIcon } from '@heroicons/react/solid'
+import { RefreshIcon } from '@heroicons/react/solid'
 
 const PageError1 = ({ error, reset }) => {
   return (

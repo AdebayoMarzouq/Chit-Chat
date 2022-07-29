@@ -6,7 +6,7 @@ import {
   ChevronDownIcon,
   PaperAirplaneIcon,
 } from '@heroicons/react/outline'
-import { query, orderBy, limit, collection } from 'firebase/firestore'
+import { query, collection } from 'firebase/firestore'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
 import { toast } from 'react-toastify'
 import { useNavigate, useOutletContext } from 'react-router-dom'
@@ -21,7 +21,7 @@ const RoomInfo = () => {
   const [input, setInput] = React.useState('')
   const { roomID, values: roomData } = useOutletContext()
   const { name, creator } = roomData
-  const [values, loading, error, snapShot] = useCollectionData(
+  const [values] = useCollectionData(
     query(collection(firestoreDB, `rooms/${roomID}/users`))
   )
 

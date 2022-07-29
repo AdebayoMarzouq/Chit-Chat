@@ -15,8 +15,6 @@ const ChatInfo = () => {
   const data = Object.values(roomData.people)
   const friendData = data.filter((item) => item.uid !== uid)[0]
 
-  console.log(friendData)
-
   const { firstname, lastname, photoUrl, username, about } = friendData
 
   return (
@@ -34,7 +32,6 @@ const ChatInfo = () => {
         resetKeys={[reset]}
       >
         <UserCard
-          require={require}
           photoUrl={photoUrl}
           username={username}
           firstname={firstname}

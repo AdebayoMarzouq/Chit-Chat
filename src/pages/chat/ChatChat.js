@@ -15,18 +15,16 @@ const ChatChat = () => {
   const inputRef = useRef(null)
   const { chatID, roomData } = useOutletContext()
   const { uid } = useStoreState((state) => state.user)
-  const [messages, messagesLoading, messagesError, messagesSnapShot] =
-    useCollectionData(
-      query(
-        collection(firestoreDB, `chats/${chatID}/messages`),
-        orderBy('createdAt'),
-        limit(25)
-      )
+  const [messages, messagesLoading] = useCollectionData(
+    query(
+      collection(firestoreDB, `chats/${chatID}/messages`),
+      orderBy('createdAt'),
+      limit(25)
     )
+  )
 
   const data = Object.values(roomData.people)
   const friendData = data.filter((item) => item.uid !== uid)[0]
-  console.log(friendData)
 
   const sendMessage = useStoreActions((actions) => actions.sendMessage)
 
@@ -47,8 +45,8 @@ const ChatChat = () => {
   }, [messages])
 
   return (
-    <main className='min-h-screen grid grid-cols-1 pb-16'>
-      <section className='relative pt-20 space-y-4 px-4'>
+    <div className='inset-0 w-full pb-16'>
+      <section className='relative space-y-4 px-4 pt-20'>
         <ChatHeader
           name={friendData.username}
           profileUrl={friendData.profileUrl}
@@ -68,7 +66,7 @@ const ChatChat = () => {
               )
             })
           ) : (
-            <div className='text-gray-500 text-center'>
+            <div className='text-center text-gray-500'>
               No message in this chat yet
             </div>
           )}
@@ -78,7 +76,7 @@ const ChatChat = () => {
       <section className='input-footer'>
         <MessageInput {...{ inputRef, handleSubmit }} />
       </section>
-    </main>
+    </div>
   )
 }
 

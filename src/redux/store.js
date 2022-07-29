@@ -1,19 +1,14 @@
-import { createStore, action, thunk, debug } from 'easy-peasy'
+import { action, createStore, thunk } from 'easy-peasy'
 import {
   addDoc,
   collection,
   doc,
-  getDocs,
-  limit,
-  onSnapshot,
-  orderBy,
-  query,
   serverTimestamp,
   setDoc,
   updateDoc,
 } from 'firebase/firestore'
-import { firestoreDB } from '../firebase/firebase'
 import { toast } from 'react-toastify'
+import { firestoreDB } from '../firebase/firebase'
 
 export const notify = (type = toast, msg, time = 2000) => {
   /*function that creates a notification using react-toastify library*/
@@ -29,7 +24,6 @@ export const store = createStore({
   user: null,
   addUserInfo: action((state, payload) => {
     state.user = payload
-    console.log('rest ==>', debug(state))
   }),
   addEditUserInfo: action((state, payload) => {
     state.user = { ...state.user, ...payload }
@@ -47,7 +41,6 @@ export const store = createStore({
       })
       notify(toast.success, 'Profile info changed successfully')
     } catch (error) {
-      console.log('user update error ===>', error.code, error.message)
       notify(toast.error, error.code)
     }
   }),
@@ -85,15 +78,10 @@ export const store = createStore({
         ),
       ]
       Promise.all(promises) // runs all promises
-        .then((res) => {
-          console.log(res)
-        })
-        .catch((error) => {
-          console.log(error)
-        })
+        .then((res) => {})
+        .catch((error) => {})
       notify(toast.success, 'Room created Successfully')
     } catch (error) {
-      console.log(error)
       notify(toast.error, 'An error occured while creating room')
     }
   }),
@@ -102,7 +90,6 @@ export const store = createStore({
     if (!payload) return
     const { user } = helpers.getState()
     const [, roomID, name] = payload.split('/')
-    console.log(roomID, ' ', name, ' ', payload)
     try {
       // adds user to the room
       await addDoc(collection(firestoreDB, `rooms/${roomID}/users`), {
@@ -123,7 +110,6 @@ export const store = createStore({
       )
       notify(toast.success, `Joined ${name} room`)
     } catch (error) {
-      console.log(error)
       notify(toast.error, `An error occured while joining ${name}`)
     }
   }),
@@ -139,7 +125,7 @@ export const store = createStore({
         createdAt: serverTimestamp(),
       })
     } catch (error) {
-      console.log(error)
+      notify(toast.error, 'error.code')
     }
   }),
 })

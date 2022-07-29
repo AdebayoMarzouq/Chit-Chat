@@ -45,7 +45,6 @@ export const useCreateUserInFirestore = () => {
       notify(toast.success, 'User Created Successfully')
       setLoading(false)
     } catch (error) {
-      console.log('Sign UP =>> ', error.code)
       setError(true)
       setLoading(false)
       notify(toast.error, 'An error occured during sign up')
@@ -54,5 +53,6 @@ export const useCreateUserInFirestore = () => {
 
   const resArray = [storeUser, regUser, loading, error]
 
+  // eslint-disable-next-line
   return useMemo(() => resArray, resArray)
 }

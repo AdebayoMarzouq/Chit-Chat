@@ -8,7 +8,6 @@ const Profile = () => {
   const user = useStoreState((state) => state.user)
   let { username, firstname, lastname, email, profileUrl, about } = user
 
-  console.log('user == ', user, '<==>', user.profileUrl)
   if (!user) return <div className='sub-loading'></div>
 
   return (

@@ -1,30 +1,31 @@
 import { useState } from 'react'
-import { useStoreState } from 'easy-peasy'
-import { ChatsTab } from './ChatsTab'
-import { HomeBody } from './HomeBody'
-import { Menu } from './Menu'
-import { RoomTab } from './RoomTab'
+import { useLocation } from 'react-router-dom'
+import { ChatPreview } from './ChatPreview'
+import { RoomPreview } from './RoomPreview'
 
-import Header from './Header'
+import Header from '../../components/Header'
 import Modal from './Modal'
 import { ErrorBoundary } from 'react-error-boundary'
 import { ErrorFallback } from '../../components'
+import { useUserContext } from '../../context'
 
 const Home = () => {
-  const [tab, setTab] = useState('chats')
+  const { pathname } = useLocation()
   const [modal, setModal] = useState(false)
   const [retry, setRetry] = useState(false)
+  const { width, isOpen, setIsOpen } = useUserContext()
 
   return (
-    <main className='min-h-screen grid grid-cols-1'>
-      <section className='space-y-2 px-4'>
-        <div className='header-bg flex items-end space-x-2 py-2 px-4 -mx-4'>
-          <Header name='Home' className='flex-grow text-white' />
-        </div>
-        <div className='grid grid-cols-2 pt-2 pb-4'>
-          <ChatsTab tab={tab} setTab={setTab} />
-          <RoomTab tab={tab} setTab={setTab} />
-          <Menu tab={tab} setModal={setModal} />
+    <div className='grid-cols-1'>
+      <section className='space-y-2 px-4 md:px-8'>
+        <div className='-mx-6 border-b bg-neutral-100 px-6'>
+          <Header
+            width={width}
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+            name={pathname === '/' ? 'chats' : 'rooms'}
+            className=''
+          />
         </div>
         <ErrorBoundary
           FallbackComponent={ErrorFallback}
@@ -33,13 +34,13 @@ const Home = () => {
           }}
           resetKeys={[retry]}
         >
-          {<HomeBody tab={tab} setModal={setModal} />}
+          {pathname === '/' ? <ChatPreview /> : <RoomPreview />}
         </ErrorBoundary>
       </section>
       <div className='flex justify-end'>
         {modal.show && <Modal type={modal.type} setModal={setModal} />}
       </div>
-    </main>
+    </div>
   )
 }
 

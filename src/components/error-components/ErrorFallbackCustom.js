@@ -1,5 +1,5 @@
 import React from 'react'
-import { ExclamationCircleIcon, RefreshIcon } from '@heroicons/react/solid'
+import { RefreshIcon } from '@heroicons/react/solid'
 
 function ErrorFallbackCustom({ error, resetErrorBoundary }) {
   return (

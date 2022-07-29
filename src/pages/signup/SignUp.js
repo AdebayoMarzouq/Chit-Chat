@@ -1,12 +1,11 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useCreateUserInFirestore } from './firebasehelper'
 import { ReactComponent } from '../../assets/chat-conversation-svgrepo-com.svg'
 import { ButtonAuth as LoginButton } from '../../components/ButtonAuth'
 
 const SignUp = () => {
-  const [createUserWithEmailAndPassword, , loading, error] =
-    useCreateUserInFirestore()
+  const [createUserWithEmailAndPassword, , loading] = useCreateUserInFirestore()
   const emailRef = useRef(null)
   const passwordRef = useRef(null)
   const confirmRef = useRef(null)

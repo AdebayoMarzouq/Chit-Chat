@@ -1,6 +1,8 @@
-import { useState } from 'react'
-import { AtSymbolIcon, UserAddIcon } from '@heroicons/react/solid'
-import { CheckCircleIcon } from '@heroicons/react/outline'
+import {
+  AtSymbolIcon,
+  CheckCircleIcon,
+  UserAddIcon,
+} from '@heroicons/react/outline'
 
 export const User = ({
   username,
@@ -27,10 +29,10 @@ export const User = ({
     if (loading) return <div className='add-loading h-8 w-8'></div>
     else if (success)
       return (
-        <CheckCircleIcon className='icon-list h-10 w-10 drop-shadow text-light-main' />
+        <CheckCircleIcon className='icon-list h-10 w-10 text-light-main drop-shadow' />
       )
     return (
-      <UserAddIcon className='icon-list h-10 w-10 drop-shadow text-light-main' />
+      <UserAddIcon className='icon-list h-10 w-10 text-light-main drop-shadow' />
     )
   }
 
@@ -38,7 +40,7 @@ export const User = ({
     <>
       <div className='relative flex items-center space-x-4'>
         <img
-          className='rounded-full h-24 w-24 shadow-inner shrink-0 object-cover'
+          className='h-24 w-24 shrink-0 rounded-full object-cover shadow-inner ring ring-light-main ring-offset-2'
           src={
             isNaN(parseInt(photoUrl))
               ? photoUrl
@@ -46,19 +48,19 @@ export const User = ({
           }
           alt='profile_image'
         />
-        <div className='grid grid-col space-y-[1px]'>
+        <div className='grid-col grid space-y-[1px]'>
           <h2 className='text-xl text-light-title'>
             {firstname}
             <span> </span>
             {lastname}
           </h2>
-          <h3 className='text-light-main flex items-center'>
+          <h3 className='flex items-center text-light-main'>
             <AtSymbolIcon className='h-4 w-4 text-gray-400' />
             {username}
           </h3>
         </div>
         <button
-          className='absolute flex justify-center items-center h-10 w-10 top-1 right-2'
+          className='absolute top-1 right-2 flex h-10 w-10 items-center justify-center'
           onClick={handleAdd}
           // adjust docreference in addFriend
           // add add loading to let the user know it is loading by replacing the add icon

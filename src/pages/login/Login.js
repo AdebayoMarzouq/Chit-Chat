@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef } from 'react'
 import { Link } from 'react-router-dom'
 
 import { useMyAuthState } from '../../firebase/firebaseUtils'
@@ -7,13 +7,10 @@ import { ReactComponent } from '../../assets/chat-conversation-svgrepo-com.svg'
 
 import { Button } from '../../components/Button'
 import { ButtonAuth as LoginButton } from '../../components/ButtonAuth'
-import { auth } from '../../firebase/firebase'
 import { login } from '../../firebase/firebaseUtils'
-import { useStoreState } from 'easy-peasy'
 
 const Login = () => {
-  const user = useStoreState((state) => state.user)
-  const [regUser, autherror, status, setStatus] = useMyAuthState()
+  const [, , status, setStatus] = useMyAuthState()
   const emailRef = useRef(null)
   const passwordRef = useRef(null)
 

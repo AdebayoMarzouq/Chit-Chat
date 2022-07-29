@@ -5,13 +5,17 @@ import { query, where, collection } from 'firebase/firestore'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
 import { firestoreDB } from '../../firebase/firebase'
 import { useStoreState } from 'easy-peasy'
+import { useUserContext } from '../../context'
+
+import { Header } from '../../components'
 
 const UsersContainer = () => {
   const searchRef = useRef(null)
   const navigate = useNavigate()
   const { pathname } = useLocation()
+  const { width, isOpen, setIsOpen } = useUserContext()
   const user = useStoreState((state) => state.user)
-  const [values, loading, error, snapshot] = useCollectionData(
+  const [values, loading, error] = useCollectionData(
     query(collection(firestoreDB, 'users'), where('userID', '!=', user.uid))
   )
 
@@ -19,33 +23,38 @@ const UsersContainer = () => {
 
   return (
     <main className='min-h-screen'>
-      <header className='header-bg grid grid-cols-3 justify-center items-center h-20 border-b border-light-main'>
-        <button
-          onClick={() => {
-            if (pathname === '/users') {
-              navigate('/')
-              return
-            }
-            navigate(-1)
-          }}
-        >
-          <ChevronLeftIcon className='h-8 w-8 text-gray-100' />
-        </button>
-        <h1 className='text-center text-xl text-gray-100 tracking-widest font-bold'>
-          {pathname === '/users' ? 'Users' : 'User'}
-        </h1>
-        <div></div>
-      </header>
+      <div className='border-b bg-neutral-100 px-2 md:px-4'>
+        <Header
+          width={width}
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          name={pathname === '/users' ? 'Users' : 'User'}
+          className='h-20 flex-grow px-2 md:px-4'
+          extra={
+            <button
+              onClick={() => {
+                if (pathname === '/users') {
+                  navigate('/')
+                  return
+                }
+                navigate(-1)
+              }}
+            >
+              <ChevronLeftIcon className='h-8 w-8 text-light-main' />
+            </button>
+          }
+        />
+      </div>
       {pathname === '/users' && (
-        <div className='relative px-12 h-12 border-b'>
+        <div className='relative h-12 border-b px-12'>
           <input
             type='text'
             placeholder='Search...'
-            className='bg-transparent placeholder-light-text placeholder-opacity-40 text py-2 focus:outline-none rounded-none pl-0'
+            className='text rounded-none bg-transparent py-2 pl-0 placeholder-light-text placeholder-opacity-40 focus:outline-none'
             ref={searchRef}
           />
           <button className='text-gray-400' onClick={handleSearch}>
-            <SearchIcon className='absolute w-5 h-5 flex-shrink-0 ml-auto top-[30%] right-12 cursor-pointer' />
+            <SearchIcon className='absolute top-[30%] right-12 ml-auto h-5 w-5 flex-shrink-0 cursor-pointer' />
           </button>
         </div>
       )}

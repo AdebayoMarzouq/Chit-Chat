@@ -9,28 +9,15 @@ const Editprofile = () => {
     actions.addEditUserInfo,
     actions.saveUserToDB,
   ])
-  const { username, firstname, lastname, profileUrl, about } = useStoreState(
+  const { username, firstname, lastname, about } = useStoreState(
     (state) => state.user
   )
   const [info, setInfo] = React.useState({
-    // username: '',
-    // firstname: '',
-    // lastname: '',
-    // about: '',
     username: username,
     firstname: firstname,
     lastname: lastname,
     about: about,
   })
-
-  // React.useEffect(() => {
-  //   setInfo({
-  //     username: username,
-  //     firstname: firstname,
-  //     lastname: lastname,
-  //     about: about,
-  //   })
-  // }, [])
 
   return (
     <main className='flex flex-col py-4 px-4'>
