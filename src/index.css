@@ -110,7 +110,7 @@
 
 /*mics*/
 .input-footer {
-  @apply fixed bottom-0 left-0 max-h-24 w-full bg-slate-200 py-2 px-4;
+  @apply fixed bottom-0 left-0 right-0 max-h-24 bg-slate-200 py-2 px-4 md:left-[288px];
 }
 
 [type='text'],

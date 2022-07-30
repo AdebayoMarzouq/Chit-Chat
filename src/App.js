@@ -30,23 +30,20 @@ const Error = lazy(() => import('./pages/Error'))
 
 const App = () => {
   const user = useStoreState((state) => state.user)
-  const { width, isOpen, setIsOpen } = useUserContext()
-
-  console.log(width)
+  const { closeNav, width, isOpen, setIsOpen } = useUserContext()
 
   return (
-    <main
-      className={`grid min-h-screen grid-cols-1 md:flex  ${'theme-orange'}`}
-    >
+    <main className={`grid h-screen w-screen grid-cols-1 ${'theme-green'}`}>
       {user?.uid && (
         <Sidebar
+          closeNav={closeNav}
           isOpen={isOpen}
           setIsOpen={setIsOpen}
           width={width}
-          className='fixed md:static'
+          className='fixed'
         />
       )}
-      <section className={`flex-grow`}>
+      <section className='overflow-y-auto md:ml-[288px]'>
         <Suspense fallback={<div className='sub-loading'></div>}>
           <ErrorBoundary fallback={<p>error occured!</p>}>
             <Routes>
@@ -76,11 +73,8 @@ const App = () => {
                 }
               >
                 <Route path='/profile' element={<Profile />} />
-                <Route path='/profile/settings' element={<ProfileSettings />} />
-                <Route
-                  path='/profile/settings/edit'
-                  element={<ProfileEdit />}
-                />
+                {/* <Route path='/profile/settings' element={<ProfileSettings />} /> */}
+                <Route path='/profile/edit' element={<ProfileEdit />} />
               </Route>
               {/* users */}
               <Route

@@ -1,22 +1,24 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ChevronLeftIcon, ViewListIcon } from '@heroicons/react/solid'
+import {
+  ChevronLeftIcon,
+  DotsCircleHorizontalIcon,
+} from '@heroicons/react/solid'
 
 const ChatHeader = ({ name, photoUrl }) => {
   const navigate = useNavigate()
   return (
-    <div className='header-bg fixed top-0 left-0 right-0 h-20 px-2 py-4 flex flex-col border-b border-light-bubble1'>
-      <div className='relative pl-16 flex items-center'>
+    <div className='fixed top-4 left-4 right-4 flex h-20 flex-col rounded-xl bg-light-main px-2 py-4 md:left-[304px]'>
+      <div className='relative flex items-center pl-8'>
         <button
-          className='absolute -left-2 text-gray-100 text-sm flex items-center'
+          className='absolute -left-2 flex items-center text-sm text-gray-100'
           onClick={() => navigate(-1)}
         >
           <span>
-            <ChevronLeftIcon className='w-8 h-8 pointer-cursor' />
+            <ChevronLeftIcon className='pointer-cursor h-8 w-8' />
           </span>
-          Home
         </button>
-        <div className='flex-shrink-0 h-12 w-12 ml-2'>
+        <div className='h-12 w-12 flex-shrink-0'>
           <img
             src={require('../../assets/images/1.png')}
             alt=''
@@ -24,17 +26,17 @@ const ChatHeader = ({ name, photoUrl }) => {
           />
         </div>
         {name ? (
-          <h1 className='ml-4 mr-2 font-bold text-gray-100 text-lg tracking-wider truncate'>
+          <h1 className='ml-4 mr-2 truncate text-lg font-bold tracking-wider text-gray-100'>
             {name}
           </h1>
         ) : (
-          <div className='h-8 w-full ml-4 mr-2 rounded-lg animate-pulse bg-gray-100'></div>
+          <div className='ml-4 mr-2 h-8 w-full animate-pulse rounded-lg bg-gray-100'></div>
         )}
         <button
-          className='ml-auto flex flex-shrink-0 mr-2'
+          className='ml-auto mr-2 flex flex-shrink-0'
           onClick={() => navigate('settings')}
         >
-          <ViewListIcon className='text-gray-200 w-8 animate-bounce' />
+          <DotsCircleHorizontalIcon className='w-8 text-gray-200' />
         </button>
       </div>
     </div>

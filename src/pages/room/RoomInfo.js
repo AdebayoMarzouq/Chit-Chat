@@ -32,12 +32,10 @@ const RoomInfo = () => {
 
   return (
     <main className='flex flex-col space-y-4 py-4 px-4'>
-      <div className='flex items-center -ml-2'>
-        <button onClick={() => navigate(-1)}>
-          <ChevronLeftIcon className='h-8 w-8 text-light-main' />
-        </button>
-        <h1 className='text-light-main'>{name}</h1>
-      </div>
+      <button className='-ml-2 flex items-center' onClick={() => navigate(-1)}>
+        <ChevronLeftIcon className='h-8 w-8 text-light-main' />
+        <span className='text-light-main'>{name}</span>
+      </button>
       <div className='flex place-content-center'>
         <img
           src={require('../../assets/images/3.png')}
@@ -50,19 +48,19 @@ const RoomInfo = () => {
           <input
             type='text'
             placeholder='Edit room name'
-            className='pl-0 bg-transparent'
+            className='bg-transparent pl-0'
             value={input}
             onChange={handleChange}
           />
           {input ? (
             <button
-              className='flex items-center ml-auto space-x-2'
+              className='ml-auto flex items-center space-x-2'
               onClick={handleSubmit}
             >
-              <PaperAirplaneIcon className='h-5 w-5 tranform rotate-90' />
+              <PaperAirplaneIcon className='tranform h-5 w-5 rotate-90' />
             </button>
           ) : (
-            <div className='flex items-center ml-auto space-x-2'>
+            <div className='ml-auto flex items-center space-x-2'>
               <PencilIcon className='h-5 w-5' />
             </div>
           )}
@@ -70,7 +68,7 @@ const RoomInfo = () => {
         <li className='flex items-center justify-between pt-4 pb-1'>
           <h4 className='truncate text-sm text-light-main'>{`room/${roomID}/${name}`}</h4>
           <button
-            className='border border-light-title rounded-full ml-4 px-2 text-sm text-light-title py-0 bg-opacity-40 active:scale-90 animate-bounce'
+            className='ml-4 animate-bounce rounded-full border border-light-title bg-opacity-40 px-2 py-0 text-sm text-light-title active:scale-90'
             onClick={() => {
               navigator.clipboard.writeText(`room/${roomID}/${name}`)
               notify(toast.info, 'Room link copied to clipboard', 2000)
@@ -81,33 +79,33 @@ const RoomInfo = () => {
         </li>
         <li className='flex items-center pt-4 pb-1'>
           <h4>Saved Messages</h4>
-          <div className='flex items-center ml-auto space-x-2'>
+          <div className='ml-auto flex items-center space-x-2'>
             <ChevronRightIcon className='h-5 w-5' />
           </div>
         </li>
         <li className='flex flex-col pt-4 pb-1'>
-          <div className='flex justify-between items-center'>
+          <div className='flex items-center justify-between'>
             <h4>People</h4>
             <button>
               {/* <ChevronRightIcon className='h-5 w-5' /> */}
               <ChevronDownIcon className='h-5 w-5' />
             </button>
           </div>
-          <ul className='ml-2 my-2 divide-y'>
+          <ul className='my-2 ml-2 divide-y'>
             {values &&
               values.map((roomUser) => {
                 return (
                   <li
                     key={uuid()}
-                    className='py-2 flex items-center justify-between'
+                    className='flex items-center justify-between py-2'
                   >
-                    <div className='space-x-2 flex items-center'>
+                    <div className='flex items-center space-x-2'>
                       <img
                         src={require(`../../assets/images/${Math.ceil(
                           Math.random() * 6
                         )}.png`)}
                         alt='profile'
-                        className='flex-shrink-0 h-8 w-8'
+                        className='h-8 w-8 flex-shrink-0'
                       />
                       <p className='truncate'>{roomUser.username}</p>
                     </div>

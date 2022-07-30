@@ -30,6 +30,7 @@ const ChatChat = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    // guard clause to prevent empty submits
     sendMessage({
       path: `chats/${chatID}`,
       message: inputRef.current.value,
@@ -45,8 +46,8 @@ const ChatChat = () => {
   }, [messages])
 
   return (
-    <div className='inset-0 w-full pb-16'>
-      <section className='relative space-y-4 px-4 pt-20'>
+    <div className='mt-20 grid grid-cols-1 pb-16 pt-4'>
+      <div className='space-y-4 px-4'>
         <ChatHeader
           name={friendData.username}
           profileUrl={friendData.profileUrl}
@@ -72,10 +73,10 @@ const ChatChat = () => {
           )}
           <div ref={bottomRef}></div>
         </div>
-      </section>
-      <section className='input-footer'>
+      </div>
+      <div className='input-footer'>
         <MessageInput {...{ inputRef, handleSubmit }} />
-      </section>
+      </div>
     </div>
   )
 }

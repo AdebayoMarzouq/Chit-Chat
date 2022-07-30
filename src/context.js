@@ -21,9 +21,20 @@ export const UserProvider = ({ children }) => {
     })
   }
 
+  const closeNav = () => setIsOpen(false)
+
   return (
     <UserContext.Provider
-      value={{ width, isOpen, setIsOpen, notify, user, loading, error }}
+      value={{
+        closeNav,
+        width,
+        isOpen,
+        setIsOpen,
+        notify,
+        user,
+        loading,
+        error,
+      }}
     >
       <>
         {children}

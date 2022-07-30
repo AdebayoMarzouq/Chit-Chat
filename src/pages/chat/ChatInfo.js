@@ -18,8 +18,8 @@ const ChatInfo = () => {
   const { firstname, lastname, photoUrl, username, about } = friendData
 
   return (
-    <main className='flex flex-col space-y-4 py-4 px-4'>
-      <div className='flex items-center -ml-2'>
+    <div className='flex flex-col space-y-4 py-4 px-4'>
+      <div className='-ml-2 flex items-center'>
         <button onClick={() => navigate(-1)}>
           <ChevronLeftIcon className='h-8 w-8 text-light-main' />
         </button>
@@ -39,7 +39,7 @@ const ChatInfo = () => {
           about={about}
         />
       </ErrorBoundary>
-    </main>
+    </div>
   )
 }
 

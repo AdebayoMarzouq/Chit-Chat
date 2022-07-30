@@ -60,7 +60,7 @@ const themes = [
   'bg-orange-600',
 ]
 
-const Sidebar = ({ isOpen, setIsOpen, width, className }) => {
+const Sidebar = ({ closeNav, isOpen, setIsOpen, width, className }) => {
   const activeLink =
     'capitalize bg-light-maintint flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-white text-md m-2 ml-0'
   const normalLink =
@@ -75,7 +75,7 @@ const Sidebar = ({ isOpen, setIsOpen, width, className }) => {
       className={`${className} inset-y-0 z-50 space-y-8 overflow-y-auto md:z-0 md:w-72 ${
         isOpen && width < 768
           ? 'w-screen'
-          : '-translate-x-full md:translate-x-0'
+          : 'w-0 -translate-x-full md:translate-x-0'
       } bg-white py-7 pl-6 pr-3 shadow-xl transition-transform`}
     >
       <div className='flex justify-between'>
@@ -133,6 +133,7 @@ const Sidebar = ({ isOpen, setIsOpen, width, className }) => {
                 className={({ isActive }) =>
                   isActive ? activeLink : normalLink
                 }
+                onClick={closeNav}
               >
                 {link.icon}
                 {link.title}

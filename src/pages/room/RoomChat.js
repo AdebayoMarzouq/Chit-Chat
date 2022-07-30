@@ -40,8 +40,8 @@ const RoomChat = () => {
   if (roomLoading) return <div className='sub-loading'></div>
 
   return (
-    <main className='min-h-screen grid grid-cols-1 pb-16'>
-      <section className='relative pt-20 space-y-4 px-4'>
+    <main className='mt-20 grid grid-cols-1 pb-16 pt-4'>
+      <section className='space-y-4 px-4'>
         <RoomHeader name={name} />
         <div className='space-y-4 overflow-y-auto'>
           {loading ? (
@@ -59,7 +59,7 @@ const RoomChat = () => {
               )
             })
           ) : (
-            <div className='text-gray-500 text-center'>
+            <div className='text-center text-gray-500'>
               There are no messages in this room yet
             </div>
           )}

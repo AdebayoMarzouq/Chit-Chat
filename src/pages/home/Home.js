@@ -16,7 +16,7 @@ const Home = () => {
   const { width, isOpen, setIsOpen } = useUserContext()
 
   return (
-    <div className='grid-cols-1'>
+    <div className=''>
       <section className='space-y-2 px-4 md:px-8'>
         <div className='-mx-6 border-b bg-neutral-100 px-6'>
           <Header
