@@ -21,9 +21,11 @@ const Editprofile = () => {
 
   return (
     <main className='flex flex-col py-4 px-4'>
-      <form className='text-light-text' onSubmit={(e) => e.preventDefault()}>
-        <h4 className='pl-3 text-sm'>Username</h4>
-        <div className='h-12 mb-2 border-b border-light-main'>
+      <form
+        className='space-y-10 text-light-textmuted dark:text-dark-textmuted'
+        onSubmit={(e) => e.preventDefault()}
+      >
+        <div className='relative h-12 border-b border-light-main'>
           <input
             type='text'
             placeholder='Enter username'
@@ -34,9 +36,9 @@ const Editprofile = () => {
               })
             }
           />
+          <h4 className='absolute top-3 right-0 text-sm'>Username</h4>
         </div>
-        <h4 className='pl-3 text-sm'>Firstname</h4>
-        <div className='h-12 mb-2 border-b border-light-main'>
+        <div className='relative h-12 border-b border-light-main'>
           <input
             type='text'
             placeholder='Enter firstname'
@@ -47,9 +49,9 @@ const Editprofile = () => {
               })
             }
           />
+          <h4 className='absolute top-3 right-0 text-sm'>Firstname</h4>
         </div>
-        <h4 className='pl-3 text-sm'>Lastname</h4>
-        <div className='h-12 mb-2 border-b border-light-main'>
+        <div className='relative h-12 border-b border-light-main'>
           <input
             type='text'
             placeholder='Enter lastname'
@@ -60,9 +62,9 @@ const Editprofile = () => {
               })
             }
           />
+          <h4 className='absolute top-3 right-0 text-sm'>Lastname</h4>
         </div>
-        <h4 className='pl-3 text-sm'>About</h4>
-        <div className='h-28 border border-light-main'>
+        <div className='relative h-28 border border-light-main'>
           <textarea
             placeholder='Write bio here'
             value={info.about}
@@ -72,11 +74,12 @@ const Editprofile = () => {
               })
             }
           />
+          <h4 className='absolute -top-6 right-0 text-sm'>About</h4>
         </div>
       </form>
       <div className='mt-4 flex'>
         <button
-          className='flex items-center border select-none py-1 px-2 rounded-xl text-sm ml-auto hover:text-white hover:bg-light-main border-light-main text-light-main'
+          className='ml-auto flex select-none items-center rounded-xl border border-light-main py-1 px-2 text-sm text-light-main hover:bg-light-main hover:text-white'
           onClick={() => {
             navigate(-1)
             updateUser(info)

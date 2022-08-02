@@ -27,15 +27,15 @@ const Login = () => {
   const handleGoogleAuth = () => {}
 
   return (
-    <main className='min-h-screen flex flex-col items-center px-4 py-8'>
-      <div className='space-y-8 flex flex-col items-center mb-4'>
+    <main className='flex flex-col items-center min-h-screen px-4 py-8 border-x min'>
+      <div className='flex flex-col items-center mb-4 space-y-8'>
         <ReactComponent
-          className={`fill-light-main h-32 w-32 drop-shadow-md`}
+          className={`fill-light-main h-32 w-32 drop-shadow-sm`}
         />
         <h2 className={`text-light-main text-4xl font-bold`}>ChitChat</h2>
       </div>
       <form
-        className='flex flex-col px-4 pt-4 pb-2 space-y-8 w-full'
+        className='flex flex-col w-full px-4 pt-4 pb-2 space-y-8 sm:w-1/2'
         onSubmit={(e) => e.preventDefault()}
       >
         <div className='h-12'>
@@ -52,7 +52,7 @@ const Login = () => {
       </form>
       <p className={`text-xl text-light-main mb-2`}>or</p>
       <Button handleClick={handleGoogleAuth} name='Sign in with Google' />
-      <div className='text-light-text text-sm mt-2'>
+      <div className='mt-2 text-sm text-light-text'>
         <p>
           Don't have an account?{' '}
           <Link to='/signup' className={`underline text-light-main`}>

@@ -7,19 +7,23 @@ function Error() {
   return (
     <div
       role='alert'
-      className='flex flex-col my-24 items-center justify-center text-gray-400 space-y-4'
+      className='flex flex-col items-center justify-center my-24 space-y-4 text-gray-400'
     >
-      <img
-        src={require('../assets/pngwing.com.png')}
-        alt='pepe the frog sad face'
-        className='w-96 object-cover'
-      />
-      <p className='text-center text-gray-500'>Oops!</p>
+      <div className='w-[10/12] dark:bg-dark-mainalt'>
+        <img
+          src={require('../assets/pngwing.com.png')}
+          alt='Error 404 anime girl'
+          className='object-cover w-[10/12]'
+        />
+      </div>
+      <p className='text-xl text-center icon-list text-light-textmuted dark:text-dark-textmuted'>
+        Oops!
+      </p>
       <button
         onClick={() => {
           navigate('/')
         }}
-        className='text-light-text border border-light-main py-2 px-4 rounded-lg text-light-main'
+        className='px-4 py-2 border rounded-lg border-light-main text-light-main'
       >
         Home
       </button>

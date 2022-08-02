@@ -21,7 +21,7 @@ const Users = ({ className = '' }) => {
   if (loading) return <div className='sub-loading'></div>
 
   return (
-    <section>
+    <section className=''>
       <ErrorBoundary
         FallbackComponent={ErrorFallbackCustom}
         onReset={() => {
@@ -67,13 +67,13 @@ const User = ({
 
   const SetIcon = () => {
     // make friends checked
-    if (loading) return <div className='add-loading h-4 w-4'></div>
+    if (loading) return <div className='w-4 h-4 add-loading'></div>
     else if (success)
       return (
-        <CheckCircleIcon className='icon-list h-6 w-6 stroke-light-main stroke-1' />
+        <CheckCircleIcon className='w-6 h-6 stroke-1 icon-list stroke-light-main' />
       )
     return (
-      <UserAddIcon className='icon-list h-6 w-6 stroke-light-main stroke-1' />
+      <UserAddIcon className='w-6 h-6 stroke-1 icon-list stroke-light-main' />
     )
   }
 
@@ -81,7 +81,7 @@ const User = ({
     <ErrorBoundary
       // FallbackComponent={ErrorFallback}
       fallback={
-        <p className='p-4 text-center text-sm text-red-500'>
+        <p className='p-4 text-sm text-center text-red-500'>
           An error occured while fetching this user
         </p>
       }
@@ -90,8 +90,13 @@ const User = ({
       }}
       resetKeys={[retry]}
     >
-      <li className='flex items-center justify-between py-4 px-4 md:px-8'>
-        <div className='flex items-center space-x-2'>
+      <li className='flex items-center justify-between px-4 py-4 hover:bg-gray-200 dark:hover:bg-dark-mainalt sm:px-8'>
+        <div
+          className='flex items-center space-x-2 cursor-pointer'
+          onClick={() => {
+            navigate(`${userID}`)
+          }}
+        >
           <img
             src={
               isNaN(parseInt(photoUrl))
@@ -99,33 +104,25 @@ const User = ({
                 : require(`../../assets/images/${photoUrl}.png`)
             }
             alt='profile'
-            className='h-12 w-12 flex-shrink-0 rounded-full ring-2 ring-light-main ring-offset-2'
+            className='flex-shrink-0 w-12 h-12 rounded-full ring-1 ring-light-main ring-offset-2 dark:ring-offset-dark-bg'
           />
           <div className='flex flex-col'>
-            <p className='truncate text-light-text'>
+            <p className='truncate text-light-text dark:text-dark-text'>
               {firstname}
               <span> </span>
               {lastname}
             </p>
             <p className='flex items-center text-sm'>
-              <AtSymbolIcon className='h-4 w-4 text-light-main' />
-              <span className='text-gray-400'>{username}</span>
+              <AtSymbolIcon className='w-4 h-4 text-light-main' />
+              <span className='text-light-textmuted dark:text-dark-textmuted'>
+                {username}
+              </span>
             </p>
           </div>
         </div>
-        <div className='flex items-center space-x-2 text-gray-400'>
-          <button
-            className=''
-            onClick={() => {
-              navigate(`${userID}`)
-            }}
-          >
-            <EyeIcon className='icon-list h-6 w-6 stroke-light-main stroke-1' />
-          </button>
-          <button className='' onClick={handleAdd}>
-            <SetIcon />
-          </button>
-        </div>
+        <button onClick={handleAdd}>
+          <SetIcon />
+        </button>
       </li>
     </ErrorBoundary>
   )

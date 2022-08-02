@@ -12,13 +12,13 @@ const ProfileContainer = () => {
 
   return (
     <>
-      <div className='border-b bg-neutral-100 px-2 md:px-4'>
+      <div className='border-b bg-light-bg px-2 dark:border-[#404040] dark:bg-dark-bg sm:px-4'>
         <Header
           width={width}
           isOpen={isOpen}
           setIsOpen={setIsOpen}
           name={pathname.split('/').join(' ')}
-          className='h-20 flex-grow px-2 md:px-4'
+          className='flex-grow h-20 sm:px-4'
           extra={
             <button
               onClick={() => {
@@ -33,7 +33,7 @@ const ProfileContainer = () => {
                 navigate(-1)
               }}
             >
-              <ChevronLeftIcon className='h-8 w-8 text-light-main' />
+              <ChevronLeftIcon className='w-8 h-8 text-light-main' />
             </button>
           }
         />

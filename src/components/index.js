@@ -7,6 +7,7 @@ import ErrorFallback from './error-components/ErrorFallback'
 import ErrorFallbackCustom from './error-components/ErrorFallbackCustom'
 import PageError1 from './error-components/PageError1'
 import Sidebar from './Sidebar'
+import { User } from './User'
 
 export {
   Header,
@@ -18,4 +19,5 @@ export {
   ErrorFallbackCustom,
   PageError1,
   Sidebar,
+  User,
 }

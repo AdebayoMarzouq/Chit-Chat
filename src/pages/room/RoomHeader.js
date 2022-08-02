@@ -9,32 +9,33 @@ const RoomHeader = ({ name, img }) => {
   const navigate = useNavigate()
 
   return (
-    <div className='fixed top-4 left-4 right-4 flex h-20 flex-col rounded-xl bg-light-main px-2 py-4 md:left-[304px]'>
+    <div className='flex flex-col w-full h-full px-2 py-4 dark:bg-dark-main bg-light-main'>
       <div className='relative flex items-center pl-8'>
         <button
-          className='absolute -left-2 flex items-center text-sm text-gray-100'
+          className='absolute flex items-center text-sm text-gray-100 -left-2'
           onClick={() => navigate(-1)}
         >
           <span>
-            <ChevronLeftIcon className='pointer-cursor h-8 w-8' />
+            <ChevronLeftIcon className='w-8 h-8 pointer-cursor' />
           </span>
         </button>
-        <div className='h-12 w-12 flex-shrink-0'>
+        <div className='flex-shrink-0 w-12 h-12 rounded-full shadow-inner ring-1 ring-light-bg ring-offset-2'>
           <img
-            src={require(`../../assets/images/${'1'}.png`)}
+            src={require(`../../assets/landscape.png`)}
+            // src='../../assets/landscape.png'
             alt=''
-            className='h-full w-full rounded-full'
+            className='w-full h-full rounded-full bg-sky-300'
           />
         </div>
         {name ? (
-          <h1 className='ml-4 mr-2 truncate text-lg tracking-wider text-gray-100'>
+          <h1 className='ml-4 mr-2 text-lg tracking-wider text-gray-100 truncate'>
             {name}
           </h1>
         ) : (
-          <div className='ml-4 mr-2 h-8 w-full animate-pulse rounded-lg bg-gray-100'></div>
+          <div className='w-full h-8 ml-4 mr-2 bg-gray-100 rounded-lg animate-pulse'></div>
         )}
         <button
-          className='ml-auto mr-2 flex flex-shrink-0'
+          className='flex flex-shrink-0 ml-auto mr-2'
           onClick={() => navigate('info')}
         >
           <DotsCircleHorizontalIcon className='w-8 text-gray-200' />

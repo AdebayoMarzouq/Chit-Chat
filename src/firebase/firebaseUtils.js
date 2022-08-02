@@ -4,12 +4,13 @@ import { signInWithEmailAndPassword, signOut } from 'firebase/auth'
 import {
   doc,
   getDoc,
+  collection,
   onSnapshot,
   serverTimestamp,
   setDoc,
 } from 'firebase/firestore'
 import { useEffect, useMemo, useState } from 'react'
-import { useAuthState } from 'react-firebase-hooks/auth'
+import { useAuthState, useCollection } from 'react-firebase-hooks/auth'
 import { useNavigate } from 'react-router-dom'
 import { auth, firestoreDB } from './firebase'
 import { toast } from 'react-toastify'
@@ -111,7 +112,7 @@ export const useAddFriend = () => {
 
 export const useMyAuthState = () => {
   const navigate = useNavigate()
-  const [authvalue, autherror] = useAuthState(auth)
+  const [authvalue, authloading, autherror] = useAuthState(auth)
   const addUserInfo = useStoreActions((actions) => actions.addUserInfo)
   const [regUser, setRegUser] = useState(null)
   const [status, setStatus] = useState({ loading: false, error: false })
@@ -148,7 +149,7 @@ export const useMyAuthState = () => {
           notify(toast.error, error.code)
         }
       )
-    } else {
+    } else if (!authloading && !autherror) {
       addUserInfo(null)
       setStatus((prev) => {
         return { ...prev, loading: false }

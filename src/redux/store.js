@@ -13,14 +13,16 @@ import { firestoreDB } from '../firebase/firebase'
 export const notify = (type = toast, msg, time = 2000) => {
   /*function that creates a notification using react-toastify library*/
   type(msg, {
-    position: toast.POSITION.TOP_CENTER,
+    position: toast.POSITION.TOP_RIGHT,
     autoClose: time,
-    className: 'rounded-0 bg-light-toasttint',
-    bodyClassName: 'text-light-text',
+    className: 'rounded-0 bg-light-maintint dark:bg-dark-mantint',
+    bodyClassName: 'text-light-text dark:text-dark-text',
   })
 }
 
 export const store = createStore({
+  // set up functionlity to add unread alerts when a user sends a Message
+  // Use last updated feature to add message time when a user sends a Message
   user: null,
   addUserInfo: action((state, payload) => {
     state.user = payload

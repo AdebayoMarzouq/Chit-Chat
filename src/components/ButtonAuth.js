@@ -9,7 +9,7 @@ export function ButtonAuth({ loading, handleSubmit, name }) {
       disabled={loading}
     >
       {loading ? (
-        <div className='flex space-x-1 justify-around items-center'>
+        <div className='flex items-center justify-around space-x-1'>
           <div className='button-loading'></div>
         </div>
       ) : (

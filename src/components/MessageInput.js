@@ -9,16 +9,24 @@ const MessageInput = ({ inputRef, handleSubmit }) => {
       onSubmit={(e) => e.preventDefault()}
     >
       <TextareaAutosize
+        autoFocus
         minRows={1}
         maxRows={3}
         ref={inputRef}
-        className='my-textarea resize-none overflow-hidden rounded-md py-2 text-sm'
+        className='py-2 overflow-hidden text-sm rounded-sm resize-none my-textarea focus:ring-1 focus:ring-light-textmuted dark:focus:ring-dark-textmuted'
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' && e.shiftKey === false) {
+            e.preventDefault()
+            handleSubmit(e)
+            return
+          }
+        }}
       />
       <button
-        className='self-end text-light-main focus-visible:outline-light-bubble1'
+        className='self-end dark:text-dark-main text-light-main focus-visible:outline-light-bubble1'
         onClick={handleSubmit}
       >
-        <PaperAirplaneIcon className='transfrom h-6 w-6 rotate-90' />
+        <PaperAirplaneIcon className='w-8 h-8 rotate-90 transfrom' />
       </button>
     </form>
   )

@@ -19,13 +19,15 @@ const RoomChat = () => {
   const [values, loading] = useCollectionData(
     query(
       collection(firestoreDB, `rooms/${roomID}/messages`),
-      orderBy('createdAt'),
+      orderBy('createdAt', 'desc'),
       limit(25)
     )
   )
 
   const handleSubmit = (e) => {
-    e.preventDefault()
+    // guard clause to prevent empty submits
+    if (!inputRef.current.value || !/\S/.test(inputRef.current.value))
+      return (inputRef.current.value = '')
     sendMessage({ path: `rooms/${roomID}`, message: inputRef.current.value })
     inputRef.current.value = ''
   }
@@ -33,43 +35,48 @@ const RoomChat = () => {
   useEffect(() => {
     if (!bottomRef.current) return
     bottomRef.current.scrollIntoView(true)
-
     // eslint-disable-next-line
   }, [values])
 
   if (roomLoading) return <div className='sub-loading'></div>
 
   return (
-    <main className='mt-20 grid grid-cols-1 pb-16 pt-4'>
-      <section className='space-y-4 px-4'>
+    <div className='h-screen'>
+      <div className='z-10 w-full h-20 mb-auto'>
         <RoomHeader name={name} />
-        <div className='space-y-4 overflow-y-auto'>
-          {loading ? (
-            <div className='sub-loading'></div>
-          ) : values.length ? (
-            values.map((message) => {
-              return (
-                <MessageBubble
-                  key={uuid()}
-                  type={message.userID === uid ? 'right' : 'left'}
-                  text={message.message}
-                  time={message.time}
-                  name={message.userID !== uid && message.username}
-                />
-              )
-            })
-          ) : (
-            <div className='text-center text-gray-500'>
-              There are no messages in this room yet
-            </div>
-          )}
+      </div>
+      <div className='w-full h-[calc(100%-80px)] flex flex-col'>
+        <div className='overflow-y-auto'>
+          <div className='pt-4 pb-1 mx-4 space-y-4'>
+            {loading ? (
+              <div className='sub-loading'></div>
+            ) : values.length ? (
+              values.reverse().map((message) => {
+                return (
+                  <MessageBubble
+                    group={true}
+                    key={uuid()}
+                    type={message.userID === uid ? 'right' : 'left'}
+                    text={message.message}
+                    time={message.time}
+                    name={message.userID !== uid && message.username}
+                    user={message.userID}
+                  />
+                )
+              })
+            ) : (
+              <div className='text-center text-gray-500'>
+                There are no messages in this room yet
+              </div>
+            )}
+          </div>
           <div ref={bottomRef}></div>
         </div>
-      </section>
-      <section className='input-footer'>
-        <MessageInput {...{ inputRef, handleSubmit }} />
-      </section>
-    </main>
+        <div className='flex-shrink-0 mt-auto input-footer'>
+          <MessageInput {...{ inputRef, handleSubmit }} />
+        </div>
+      </div>
+    </div>
   )
 }
 

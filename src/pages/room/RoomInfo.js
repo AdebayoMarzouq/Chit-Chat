@@ -31,7 +31,7 @@ const RoomInfo = () => {
   const handleSubmit = () => {}
 
   return (
-    <main className='flex flex-col space-y-4 py-4 px-4'>
+    <main className='flex flex-col space-y-10 py-4 px-4'>
       <button className='-ml-2 flex items-center' onClick={() => navigate(-1)}>
         <ChevronLeftIcon className='h-8 w-8 text-light-main' />
         <span className='text-light-main'>{name}</span>
@@ -43,8 +43,8 @@ const RoomInfo = () => {
           className='h-32 w-32'
         />
       </div>
-      <ul className='grid grid-cols-1 divide-y text-gray-500'>
-        <li className='flex items-center pt-4 pb-1'>
+      <ul className='grid grid-cols-1 space-y-10 text-light-text dark:text-dark-text [&>*]:border-b dark:[&>*]:border-[#404040] [&>*:last-child]:border-0'>
+        <li className='flex items-center'>
           <input
             type='text'
             placeholder='Edit room name'
@@ -65,10 +65,10 @@ const RoomInfo = () => {
             </div>
           )}
         </li>
-        <li className='flex items-center justify-between pt-4 pb-1'>
+        <li className='flex items-center justify-between'>
           <h4 className='truncate text-sm text-light-main'>{`room/${roomID}/${name}`}</h4>
           <button
-            className='ml-4 animate-bounce rounded-full border border-light-title bg-opacity-40 px-2 py-0 text-sm text-light-title active:scale-90'
+            className='ml-4 animate-bounce rounded-full border border-light-textmuted bg-opacity-40 px-2 pb-1 text-sm text-light-text active:scale-90 dark:border-dark-textmuted dark:text-dark-text'
             onClick={() => {
               navigator.clipboard.writeText(`room/${roomID}/${name}`)
               notify(toast.info, 'Room link copied to clipboard', 2000)
@@ -77,27 +77,27 @@ const RoomInfo = () => {
             copy
           </button>
         </li>
-        <li className='flex items-center pt-4 pb-1'>
+        {/* <li className='flex items-center'>
           <h4>Saved Messages</h4>
           <div className='ml-auto flex items-center space-x-2'>
             <ChevronRightIcon className='h-5 w-5' />
           </div>
-        </li>
-        <li className='flex flex-col pt-4 pb-1'>
-          <div className='flex items-center justify-between'>
+        </li> */}
+        <li className='flex flex-col'>
+          <div className='flex items-center justify-between text-light-textmuted dark:text-dark-textmuted'>
             <h4>People</h4>
             <button>
               {/* <ChevronRightIcon className='h-5 w-5' /> */}
               <ChevronDownIcon className='h-5 w-5' />
             </button>
           </div>
-          <ul className='my-2 ml-2 divide-y'>
+          <ul className='my-2 ml-2 divide-y dark:divide-[#404040] sm:ml-4'>
             {values &&
               values.map((roomUser) => {
                 return (
                   <li
                     key={uuid()}
-                    className='flex items-center justify-between py-2'
+                    className='flex items-center justify-between py-4'
                   >
                     <div className='flex items-center space-x-2'>
                       <img

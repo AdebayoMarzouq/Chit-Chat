@@ -29,7 +29,7 @@ const SignUp = () => {
     <main className='min-h-screen flex flex-col items-center px-4 py-8'>
       <div className='space-y-8 flex flex-col items-center mb-4'>
         <ReactComponent
-          className={`fill-light-main h-32 w-32 drop-shadow-md`}
+          className={`fill-light-main h-32 w-32 drop-shadow-sm`}
         />
         <h2 className={`text-light-main text-4xl font-bold`}>ChitChat</h2>
       </div>

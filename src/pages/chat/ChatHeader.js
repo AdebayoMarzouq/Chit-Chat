@@ -1,43 +1,40 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
-  ChevronLeftIcon,
-  DotsCircleHorizontalIcon,
-} from '@heroicons/react/solid'
+import { ChevronLeftIcon } from '@heroicons/react/solid'
 
 const ChatHeader = ({ name, photoUrl }) => {
   const navigate = useNavigate()
   return (
-    <div className='fixed top-4 left-4 right-4 flex h-20 flex-col rounded-xl bg-light-main px-2 py-4 md:left-[304px]'>
+    <div className='dark:bg-dark-main flex h-20 flex-col bg-light-main px-2 py-4'>
       <div className='relative flex items-center pl-8'>
         <button
-          className='absolute -left-2 flex items-center text-sm text-gray-100'
+          className='absolute flex items-center text-sm text-gray-100 -left-2'
           onClick={() => navigate(-1)}
         >
           <span>
-            <ChevronLeftIcon className='pointer-cursor h-8 w-8' />
+            <ChevronLeftIcon className='w-8 h-8 pointer-cursor' />
           </span>
         </button>
-        <div className='h-12 w-12 flex-shrink-0'>
+        <div
+          className='flex-shrink-0 w-12 h-12'
+          onClick={() => navigate('info')}
+        >
           <img
             src={require('../../assets/images/1.png')}
             alt=''
-            className='h-full w-full rounded-full'
+            className='cursor-pointer w-full h-full rounded-full'
           />
         </div>
         {name ? (
-          <h1 className='ml-4 mr-2 truncate text-lg font-bold tracking-wider text-gray-100'>
+          <h1
+            className='cursor-pointer ml-4 mr-2 text-lg font-bold tracking-wider text-gray-100 truncate'
+            onClick={() => navigate('info')}
+          >
             {name}
           </h1>
         ) : (
-          <div className='ml-4 mr-2 h-8 w-full animate-pulse rounded-lg bg-gray-100'></div>
+          <div className='w-full h-8 ml-4 mr-2 bg-gray-100 rounded-lg animate-pulse'></div>
         )}
-        <button
-          className='ml-auto mr-2 flex flex-shrink-0'
-          onClick={() => navigate('settings')}
-        >
-          <DotsCircleHorizontalIcon className='w-8 text-gray-200' />
-        </button>
       </div>
     </div>
   )

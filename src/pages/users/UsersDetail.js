@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useParams, useOutletContext } from 'react-router-dom'
-import { User } from './User'
+import { User } from '../../components/User'
 import { useAddFriend } from '../../firebase/firebaseUtils'
 import { ErrorBoundary } from 'react-error-boundary'
 import { ErrorFallbackCustom } from '../../components'

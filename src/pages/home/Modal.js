@@ -1,5 +1,4 @@
-import React from 'react'
-import { XIcon } from '@heroicons/react/outline'
+import React, { useState } from 'react'
 
 import { useStoreActions } from 'easy-peasy'
 
@@ -8,11 +7,10 @@ const Modal = ({ type, setModal }) => {
     actions.createRoom,
     actions.joinRoom,
   ])
-  const [roomName, setRoomName] = React.useState('')
-  const [roomLink, setRoomLink] = React.useState('')
+  const [roomName, setRoomName] = useState('')
+  const [roomLink, setRoomLink] = useState('')
 
   const handleCreate = () => {
-    if (!roomName) return
     setRoomName('')
     createRoom(roomName)
     setModal((prev) => !prev)
@@ -21,12 +19,10 @@ const Modal = ({ type, setModal }) => {
   const handleCreateChange = (e) => {
     if (e.target.value.length <= 40) {
       setRoomName(e.target.value)
-      return
     }
   }
 
   const handleJoin = () => {
-    if (!roomLink) return
     setRoomLink('')
     joinRoom(roomLink)
     setModal((prev) => !prev)
@@ -37,23 +33,25 @@ const Modal = ({ type, setModal }) => {
   }
 
   return (
-    <div className='fixed z-50 top-0 left-0 h-screen w-screen bg-black bg-opacity-30 flex items-center place-content-center'>
-      <div className='relative bg-[#fafafa] min-h-32 w-11/12 p-2 rounded-lg shadow-xl text-light-text'>
-        <button
-          className='absolute right-4 top-2'
-          onClick={() => setModal(false)}
+    <div className='absolute inset-0 z-50 flex items-center bg-black bg-opacity-30 dark:bg-opacity-70 place-content-center'>
+      <div className='w-11/12 px-2 py-3 rounded-lg shadow-xl sm:px-4 bg-light-bg dark:bg-dark-mainalt min-h-32 sm:w-10/12 text-light-text'>
+        <div className='grid grid-rows-2'>
+          <h2 className='text-xl text-light-text dark:text-dark-text'>
+            {type === 'create' ? 'Create room name' : 'Join room'}
+          </h2>
+          <p className='text-xs select-none text-light-textmuted dark:text-dark-textmuted top-4 left-5'>
+            {type === 'create'
+              ? 'Room name should not be longer than 40 characters'
+              : 'Paste room link here to join'}
+          </p>
+        </div>
+        <form
+          className='flex-col space-y-4'
+          onSubmit={(e) => e.preventDefault()}
         >
-          <XIcon className='h-6 w-6' />
-        </button>
-        <p className='absolute text-xs text-light-chat top-2 left-5'>
-          {type === 'create'
-            ? '40 characters max'
-            : 'Paste room link here to join'}
-        </p>
-        <form className='space-y-2 flex-col mt-4'>
-          <div className='h-14 border-b border-light-main'>
+          <div className='h-10 border rounded-lg border-light-textmuted dark:border-[#404040]'>
             <input
-              className='placeholder:select-none'
+              className='placeholder:select-none placeholder:text-sm'
               type='text'
               placeholder={
                 type === 'create' ? 'Enter room name' : 'Paste room link'
@@ -68,28 +66,34 @@ const Modal = ({ type, setModal }) => {
               }}
             />
           </div>
-          <div className='flex'>
+          <div className='flex items-center justify-end gap-2'>
+            <button
+              className='px-2 py-1 text-sm select-none rounded-xl text-light-text dark:text-dark-textmuted hover:text-red-600 dark:hover:text-red-400'
+              onClick={() => setModal(false)}
+            >
+              Cancel
+            </button>
             {type === 'create' ? (
               <button
-                className={`border select-none py-1 px-2 rounded-xl text-sm ml-auto ${
-                  !roomName
-                    ? 'pointer-events-none text-gray-400'
-                    : 'hover:text-white hover:bg-light-main border-light-main text-light-main'
+                className={`border select-none py-1 px-2 rounded-lg text-sm ${
+                  !/\S/.test(roomName)
+                    ? 'pointer-events-none dark:border-[#404040] text-light-textmuted dark:text-[#404040]'
+                    : 'bg-light-main dark:bg-dark-main text-white border-none hover:scale-95'
                 }`}
                 onClick={handleCreate}
-                disabled={!roomName}
+                disabled={!/\S/.test(roomName)}
               >
                 Create room
               </button>
             ) : (
               <button
-                className={`border select-none py-1 px-2 rounded-xl text-sm ml-auto ${
-                  !roomLink
-                    ? 'pointer-events-none text-gray-400'
-                    : 'hover:text-white hover:bg-light-main border-light-main text-light-main'
+                className={`border select-none py-1 px-2 rounded-lg text-sm ${
+                  !/\S/.test(roomLink)
+                    ? 'pointer-events-none dark:border-[#404040] text-light-textmuted dark:text-[#404040]'
+                    : 'bg-light-main dark:bg-dark-main text-white border-none hover:scale-95'
                 }`}
                 onClick={handleJoin}
-                disabled={!roomLink}
+                disabled={!/\S/.test(roomLink)}
               >
                 Join room
               </button>

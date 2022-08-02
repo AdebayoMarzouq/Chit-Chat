@@ -3,8 +3,7 @@ import { useStoreState } from 'easy-peasy'
 import React, { useState } from 'react'
 import { useNavigate, useOutletContext } from 'react-router-dom'
 import { ErrorBoundary } from 'react-error-boundary'
-import { ErrorFallbackCustom } from '../../components'
-import { UserCard } from './UserCard'
+import { User, ErrorFallbackCustom } from '../../components'
 
 const ChatInfo = () => {
   const navigate = useNavigate()
@@ -31,8 +30,8 @@ const ChatInfo = () => {
         }}
         resetKeys={[reset]}
       >
-        <UserCard
-          photoUrl={photoUrl}
+        <User
+          profileUrl={photoUrl}
           username={username}
           firstname={firstname}
           lastname={lastname}

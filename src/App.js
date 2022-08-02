@@ -4,18 +4,16 @@ import { Route, Routes } from 'react-router-dom'
 import 'react-toastify/dist/ReactToastify.min.css'
 import { ProtectedRoute } from './Protected'
 import { useUserContext } from './context'
-import { useStoreState, useStoreActions } from 'easy-peasy'
+import { useStoreState } from 'easy-peasy'
 
-import { useWindowDimensions } from './utils'
-
-import { Sidebar } from './components'
+import { ErrorFallback, Sidebar } from './components'
 
 const SignUp = lazy(() => import('./pages/signup/SignUp'))
 const Login = lazy(() => import('./pages/login/Login'))
 const Home = lazy(() => import('./pages/home/Home'))
 const ProfileContainer = lazy(() => import('./pages/profile/ProfileContainer'))
 const Profile = lazy(() => import('./pages/profile/Profile'))
-const ProfileSettings = lazy(() => import('./pages/profile/ProfileSettings'))
+// const ProfileSettings = lazy(() => import('./pages/profile/ProfileSettings'))
 const ProfileEdit = lazy(() => import('./pages/profile/ProfileEdit'))
 const UsersContainer = lazy(() => import('./pages/users/UsersContainer'))
 const Users = lazy(() => import('./pages/users/Users'))
@@ -23,17 +21,21 @@ const UsersDetail = lazy(() => import('./pages/users/UsersDetail'))
 const RoomContainer = lazy(() => import('./pages/room/RoomContainer'))
 const RoomChat = lazy(() => import('./pages/room/RoomChat'))
 const RoomInfo = lazy(() => import('./pages/room/RoomInfo'))
+const UserCardPage = lazy(() => import('./pages/room/UserCardPage'))
 const ChatContainer = lazy(() => import('./pages/chat/ChatContainer'))
 const ChatChat = lazy(() => import('./pages/chat/ChatChat'))
 const ChatInfo = lazy(() => import('./pages/chat/ChatInfo'))
 const Error = lazy(() => import('./pages/Error'))
 
 const App = () => {
+  const [resetApp, setResetApp] = useState(false)
   const user = useStoreState((state) => state.user)
-  const { closeNav, width, isOpen, setIsOpen } = useUserContext()
+  const { theme, closeNav, width, isOpen, setIsOpen } = useUserContext()
 
   return (
-    <main className={`grid h-screen w-screen grid-cols-1 ${'theme-green'}`}>
+    <main
+      className={`max-w-5xl mx-auto overflow-x-hidden h-screen w-screen ${theme} bg-light-bg dark:bg-dark-bg sm:border-r border-neutral-200 dark:border-[#404040]`}
+    >
       {user?.uid && (
         <Sidebar
           closeNav={closeNav}
@@ -43,9 +45,15 @@ const App = () => {
           className='fixed'
         />
       )}
-      <section className='overflow-y-auto md:ml-[288px]'>
+      <section className={`overflow-y-auto ${user && 'sm:ml-[288px]'}`}>
         <Suspense fallback={<div className='sub-loading'></div>}>
-          <ErrorBoundary fallback={<p>error occured!</p>}>
+          <ErrorBoundary
+            FallbackComponent={ErrorFallback}
+            onReset={() => {
+              setResetApp((x) => !x)
+            }}
+            resetKeys={[resetApp]}
+          >
             <Routes>
               {/* login */}
               <Route path='/login' element={<Login />} />
@@ -72,9 +80,9 @@ const App = () => {
                   </ProtectedRoute>
                 }
               >
-                <Route path='/profile' element={<Profile />} />
+                <Route index element={<Profile />} />
                 {/* <Route path='/profile/settings' element={<ProfileSettings />} /> */}
-                <Route path='/profile/edit' element={<ProfileEdit />} />
+                <Route path='edit' element={<ProfileEdit />} />
               </Route>
               {/* users */}
               <Route
@@ -85,8 +93,8 @@ const App = () => {
                   </ProtectedRoute>
                 }
               >
-                <Route path='/users' element={<Users />} />
-                <Route path='/users/:userID' element={<UsersDetail />} />
+                <Route index element={<Users />} />
+                <Route path=':userID' element={<UsersDetail />} />
               </Route>
               {/* room */}
               <Route
@@ -97,8 +105,9 @@ const App = () => {
                   </ProtectedRoute>
                 }
               >
-                <Route path='/room/:roomID/' element={<RoomChat />} />
-                <Route path='/room/:roomID/info' element={<RoomInfo />} />
+                <Route index element={<RoomChat />} />
+                <Route path='info' element={<RoomInfo />} />
+                <Route path=':userID/info' element={<UserCardPage />} />
               </Route>
               {/* chat */}
               <Route
@@ -109,8 +118,8 @@ const App = () => {
                   </ProtectedRoute>
                 }
               >
-                <Route path='/chat/:chatID/' element={<ChatChat />} />
-                <Route path='/chat/:chatID/settings' element={<ChatInfo />} />
+                <Route index element={<ChatChat />} />
+                <Route path='info' element={<ChatInfo />} />
               </Route>
               <Route path='*' element={<Error />} />
             </Routes>

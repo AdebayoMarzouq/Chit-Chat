@@ -5,6 +5,7 @@ import { RoomPreview } from './RoomPreview'
 
 import Header from '../../components/Header'
 import Modal from './Modal'
+import { PlusIcon, LinkIcon } from '@heroicons/react/outline'
 import { ErrorBoundary } from 'react-error-boundary'
 import { ErrorFallback } from '../../components'
 import { useUserContext } from '../../context'
@@ -16,9 +17,9 @@ const Home = () => {
   const { width, isOpen, setIsOpen } = useUserContext()
 
   return (
-    <div className=''>
-      <section className='space-y-2 px-4 md:px-8'>
-        <div className='-mx-6 border-b bg-neutral-100 px-6'>
+    <section className='relative h-full overflow-x-hidden bg-light-bg dark:bg-dark-bg'>
+      <div className='px-4 space-y-2 sm:px-8'>
+        <div className='dark:bg-dark -mx-6 border-b px-6 dark:border-[#404040]'>
           <Header
             width={width}
             isOpen={isOpen}
@@ -27,6 +28,26 @@ const Home = () => {
             className=''
           />
         </div>
+        {pathname === '/rooms' && (
+          <div className='flex justify-end gap-4 text-light-textmuted dark:text-dark-textmuted'>
+            <button
+              className='hover:text-light-text dark:hover:text-dark-text'
+              onClick={() => {
+                setModal({ type: 'join', show: true })
+              }}
+            >
+              Join <LinkIcon className='inline w-3 -ml-1' />
+            </button>
+            <button
+              className='hover:text-light-text dark:hover:text-dark-text'
+              onClick={() => {
+                setModal({ type: 'create', show: true })
+              }}
+            >
+              Create <PlusIcon className='inline w-3 -ml-1' />
+            </button>
+          </div>
+        )}
         <ErrorBoundary
           FallbackComponent={ErrorFallback}
           onReset={() => {
@@ -36,11 +57,9 @@ const Home = () => {
         >
           {pathname === '/' ? <ChatPreview /> : <RoomPreview />}
         </ErrorBoundary>
-      </section>
-      <div className='flex justify-end'>
-        {modal.show && <Modal type={modal.type} setModal={setModal} />}
       </div>
-    </div>
+      {modal.show && <Modal type={modal.type} setModal={setModal} />}
+    </section>
   )
 }
 
