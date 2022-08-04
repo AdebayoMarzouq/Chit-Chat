@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { memo, useEffect, useRef } from 'react'
 import { NavLink } from 'react-router-dom'
 import {
   ChatAltIcon,
@@ -78,7 +78,7 @@ const themes = [
   },
 ]
 
-const Sidebar = ({ className }) => {
+const Sidebar = memo(({ className }) => {
   const {
     theme,
     setTheme,
@@ -89,6 +89,9 @@ const Sidebar = ({ className }) => {
     setIsOpen,
     width,
   } = useUserContext()
+  const user = useStoreState((state) => state.user)
+  const render_count = useRef(0)
+
   const activeLink =
     'capitalize bg-light-main flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-light-mainalt text-sm m-2 ml-0'
   const normalLink =
@@ -97,6 +100,12 @@ const Sidebar = ({ className }) => {
   const handleSignOut = () => {
     logout()
   }
+
+  useEffect(() => {
+    render_count.current++
+  })
+
+  console.log(render_count.current)
 
   return (
     <aside
@@ -113,7 +122,7 @@ const Sidebar = ({ className }) => {
         </h1>
         {width < 640 && (
           <button
-            className='mr-1 h-8 w-8 text-light-textmuted dark:text-dark-textmuted'
+            className='w-8 h-8 mr-1 text-light-textmuted dark:text-dark-textmuted'
             onClick={() => {
               setIsOpen(false)
             }}
@@ -138,7 +147,7 @@ const Sidebar = ({ className }) => {
             Hi 👋🏼,
           </span>
           <h2 className='text-lg truncate text-light-text dark:text-dark-text'>
-            Marzouq
+            {user.username}
           </h2>
         </div>
         <button
@@ -240,6 +249,6 @@ const Sidebar = ({ className }) => {
       </div>
     </aside>
   )
-}
+})
 
 export default Sidebar
